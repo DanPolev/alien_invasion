@@ -16,20 +16,26 @@ class AlienInvasion():
         pygame.display.set_caption("Alien Invasion")
         self.ship = Ship(self)
 
+    def _check_events(self):
+        """Process keyboard and mouse events"""
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+
+    def _update_screen(self):
+        """Update screen state"""
+        # Redraw the screen
+        self.screen.fill(self.settings.bg_color)
+        self.ship.blitme()
+
+        # Display last drawn screen
+        pygame.display.flip()
+
     def run_game(self):
         """Run main loop"""
         while True:
-            # Tracking keyboard and mouse events
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
-
-            # Redraw the screen
-            self.screen.fill(self.settings.bg_color)
-            self.ship.blitme()
-
-            # Display last drawn screen
-            pygame.display.flip()
+            self._check_events()
+            self._update_screen()
 
 if __name__ == "__main__":
     ai = AlienInvasion()
