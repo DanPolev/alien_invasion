@@ -57,8 +57,9 @@ class AlienInvasion():
 
     def _fire(self):
         """Make new bullet & add it to the bullets group"""
-        new_bullet = Bullet(self)
-        self.bullets.add(new_bullet)
+        if len(self.bullets) < self.settings.max_bullets:
+            new_bullet = Bullet(self)
+            self.bullets.add(new_bullet)
 
     def _update_screen(self):
         """Update screen state"""
@@ -76,8 +77,6 @@ class AlienInvasion():
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
-        print(len(self.bullets))
-
 
     def run_game(self):
         """Run main loop"""
