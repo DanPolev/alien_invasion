@@ -72,12 +72,20 @@ class AlienInvasion():
         # Display last drawn screen
         pygame.display.flip()
 
+    def delete_bullets(self):
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
+        print(len(self.bullets))
+
+
     def run_game(self):
         """Run main loop"""
         while True:
             self._check_events()
             self.ship.update()
             self.bullets.update()
+            self.delete_bullets()
             self._update_screen()
 
 if __name__ == "__main__":
