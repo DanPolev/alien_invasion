@@ -13,10 +13,17 @@ class AlienInvasion():
         self.settings = Settings()
         self.screen = pygame.display.set_mode(
             (0, 0), pygame.FULLSCREEN)
+        self.screen_rect = self.screen.get_rect()
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("Alien Invasion by DanPolev")
+
         self.ship = Ship(self)
+        self.bg_image = pygame.image.load("images/space_background.bmp")
+
+    def blit_bg_image(self):
+        """Blit background image on the screen"""
+        self.screen.blit(self.bg_image, self.screen_rect)
 
     def _check_events(self):
         """Process keyboard and mouse events"""
@@ -47,7 +54,9 @@ class AlienInvasion():
     def _update_screen(self):
         """Update screen state"""
         # Redraw the scree with color
-        self.screen.fill(self.settings.bg_color)
+        #self.screen.fill(self.settings.bg_color)
+        # Update background
+        self.blit_bg_image()
 
         # Update ship state
         self.ship.update()
