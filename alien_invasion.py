@@ -29,14 +29,22 @@ class AlienInvasion():
         """Create alien fleet"""
         alien = Alien(self)
         avail_space_x = self.screen_rect.width - 2 * alien.rect.width
+        avail_space_y = (self.screen_rect.height - 2 * alien.rect.height -
+                        self.ship.rect.height)
         number_aliens_x = avail_space_x // (2 * alien.rect.width)
-        for i in range(number_aliens_x):
-            self._create_alien(i)
+        number_aliens_y = avail_space_y // (2 * alien.rect.height)
 
-    def _create_alien(self, alien_id):
+        for row in range(number_aliens_y):
+            for col in range(number_aliens_x):
+                self._create_alien(row, col)
+
+    def _create_alien(self, row, col):
+        """Create an alien for the given row & column id"""
         alien = Alien(self)
-        alien.x = alien.rect.width * (2 * alien_id + 1)
+        alien.x = alien.rect.width * (2 * col + 1)
         alien.rect.x = alien.x
+        alien.y = alien.rect.height * (2 * row + 1)
+        alien.rect.y = alien.y
         self.aliens.add(alien)
 
 
