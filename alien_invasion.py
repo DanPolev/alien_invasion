@@ -31,10 +31,14 @@ class AlienInvasion():
         avail_space_x = self.screen_rect.width - 2 * alien.rect.width
         number_aliens_x = avail_space_x // (2 * alien.rect.width)
         for i in range(number_aliens_x):
-            alien = Alien(self)
-            alien.x = alien.rect.width * (2 * i + 1)
-            alien.rect.x = alien.x
-            self.aliens.add(alien)
+            self._create_alien(i)
+
+    def _create_alien(self, alien_id):
+        alien = Alien(self)
+        alien.x = alien.rect.width * (2 * alien_id + 1)
+        alien.rect.x = alien.x
+        self.aliens.add(alien)
+
 
     def _blit_bg_image(self):
         """Blit background image on the screen"""
