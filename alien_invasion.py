@@ -4,6 +4,7 @@ import pygame
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
+from alien import Alien
 
 class AlienInvasion():
     """Main class for game behaviour and resources management"""
@@ -15,15 +16,27 @@ class AlienInvasion():
         self.screen = pygame.display.set_mode(
             (0, 0), pygame.FULLSCREEN)
         self.screen_rect = self.screen.get_rect()
-        self.settings.screen_width = self.screen.get_rect().width
-        self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("Alien Invasion by DanPolev")
 
         self.ship = Ship(self)
         self.bg_image = pygame.image.load("images/space_background.bmp")
         self.bullets = pygame.sprite.Group()
+        self.aliens = pygame.sprite.Group()
 
-    def blit_bg_image(self):
+        self._create_fleet()
+
+    def _create_fleet(self):
+        """Create alien fleet"""
+        alien = Alien(self)
+        avail_space_x = self.screen_rect.width - 2 * alien.rect.width
+        number_aliens_x = avail_space_x // (2 * alien.rect.width)
+        for i in range(number_aliens_x):
+            alien = Alien(self)
+            alien.x = alien.rect.width * (2 * i + 1)
+            alien.rect.x = alien.x
+            self.aliens.add(alien)
+
+    def _blit_bg_image(self):
         """Blit background image on the screen"""
         self.screen.blit(self.bg_image, self.screen_rect)
 
@@ -58,18 +71,18 @@ class AlienInvasion():
     def _fire(self):
         """Make new bullet & add it to the bullets group"""
         if len(self.bullets) < self.settings.max_bullets:
-            new_bullet = Bullet(self)
-            self.bullets.add(new_bullet)
+            self.bullets.add(Bullet(self))
 
     def _update_screen(self):
         """Update screen state"""
         # Update background
-        self.blit_bg_image()
+        self._blit_bg_image()
         # Update ship state
         self.ship.blitme()
         # Draw bullets
-        for bullet in self.bullets.sprites():
-            bullet.draw()
+        self.bullets.draw(self.screen)
+        # Draw an alien
+        self.aliens.draw(self.screen)
         # Display last drawn screen
         pygame.display.flip()
 
