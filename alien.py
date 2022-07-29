@@ -13,8 +13,8 @@ class Alien(Sprite):
         self.rect = self.image.get_rect()
 
         # Set initial alien position
-        self.rect.x = self.rect.width
-        self.rect.y = self.rect.height
+        self.rect.x = self.rect.w
+        self.rect.y = self.rect.h
 
         # Save x-coordinate of the alien ship
         self.x = float(self.rect.x)

@@ -9,7 +9,6 @@ class Bullet(Sprite):
         super().__init__()
         self.screen = ai_game.screen
         self.settings = ai_game.settings
-        self.color = ai_game.settings.bullet_color
 
         # Create a bullet
         self.image = pygame.image.load("images/bullet.bmp")
