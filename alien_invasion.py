@@ -6,6 +6,7 @@ from ship import Ship
 from bullet import Bullet
 from alien import Alien
 
+
 class AlienInvasion():
     """Main class for game behaviour and resources management"""
 
@@ -45,7 +46,6 @@ class AlienInvasion():
         alien.y = alien.rect.h * (2 * row + 1)
         alien.rect.y = alien.y
         self.aliens.add(alien)
-
 
     def _blit_bg_image(self):
         """Blit background image on the screen"""
@@ -98,11 +98,30 @@ class AlienInvasion():
         pygame.display.flip()
 
     def _update_bullets(self):
+        """Update bullets position, remove them if they reach screen edge"""
         self.bullets.update()
 
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
+
+    def _check_fleet_edges(self):
+        """Change fleet direction if it reaches the screen edge"""
+        for alien in self.aliens:
+            if alien.check_edges():
+                self._change_fleet_dir()
+                break
+
+    def _change_fleet_dir(self):
+        """Change fleet direction, (right/left)"""
+        for alien in self.aliens:
+            alien.rect.y += self.settings.alien_descend_speed
+        self.settings.fleet_dir *= -1
+
+    def _update_aliens(self):
+        """Update positions of all aliens in the fleet"""
+        self._check_fleet_edges()
+        self.aliens.update()
 
     def run_game(self):
         """Run main loop"""
@@ -110,7 +129,9 @@ class AlienInvasion():
             self._check_events()
             self.ship.update()
             self._update_bullets()
+            self._update_aliens()
             self._update_screen()
+
 
 if __name__ == "__main__":
     ai = AlienInvasion()
