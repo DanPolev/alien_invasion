@@ -107,6 +107,8 @@ class AlienInvasion():
 
         collision = pygame.sprite.groupcollide(
             self.bullets, self.aliens, True, True)
+        if not self.aliens:
+            self._create_fleet()
 
     def _check_fleet_edges(self):
         """Change fleet direction if it reaches the screen edge"""
