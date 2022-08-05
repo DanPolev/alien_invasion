@@ -16,9 +16,6 @@ class Bullet(Sprite):
         self.rect = self.image.get_rect()
         self.rect.midtop = ai_game.ship.rect.midtop
 
-        # TODO: only for debugging
-        # self.rect.w = 3000
-
         # Bullet position is stored in float format
         self.y = float(self.rect.y)
 

@@ -1,8 +1,11 @@
 import pygame
 from pygame.sprite import Sprite
 
+
 class Explosion(Sprite):
+    """Create explosions"""
     def __init__(self, game, x, y):
+        """Initialize explosion fields"""
         super().__init__()
         self.screen = game.screen
         self.images = []
@@ -14,6 +17,7 @@ class Explosion(Sprite):
         self.rect.center = (x, y)
 
     def _load_images(self):
+        """Loads explosion images & put them in the list"""
         img_num = 3
         for i in range(img_num):
             image = pygame.image.load(f"images/exp{i}.bmp")
@@ -21,6 +25,7 @@ class Explosion(Sprite):
             self.images.append(image)
 
     def update(self):
+        """Update explosion images"""
         explosion_time = 10
         # update explosion animation
         self.counter += 1
