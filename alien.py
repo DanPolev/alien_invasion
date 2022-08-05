@@ -8,17 +8,14 @@ class Alien(Sprite):
         super().__init__()
         self.screen = ai_game.screen
         self.settings = ai_game.settings
-
         # Load alien image
         self.image = pygame.image.load("images/alien_ship.bmp")
         self.rect = self.image.get_rect()
-
         # Set initial alien position
         self.rect.x = self.rect.w
         self.rect.y = self.rect.h
-
-        # Save x-coordinate of the alien ship
         self.x = float(self.rect.x)
+
 
     def check_edges(self):
         """Return True if alien's reached the screen edge"""

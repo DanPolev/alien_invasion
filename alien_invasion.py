@@ -5,6 +5,7 @@ from settings import Settings
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
+from explosion import Explosion
 
 
 class AlienInvasion():
@@ -23,6 +24,7 @@ class AlienInvasion():
         self.bg_image = pygame.image.load("images/space_background.bmp")
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
+        self.explosions = pygame.sprite.Group()
 
         self._create_fleet()
 
@@ -94,6 +96,8 @@ class AlienInvasion():
         self.bullets.draw(self.screen)
         # Draw an alien
         self.aliens.draw(self.screen)
+        # Draw an explosion
+        self.explosions.draw(self.screen)
         # Display last drawn screen
         pygame.display.flip()
 
@@ -107,14 +111,17 @@ class AlienInvasion():
         update alien fleet in case of its destroying"""
         collision = pygame.sprite.groupcollide(
             self.bullets, self.aliens, True, True)
-        """if collision:                                      # TODO: refactor this
-            for lists in collision.values():
-                for elmt in lists:
-
-                    print(elmt.rect.center)
-        """
+        if collision:
+            self._create_explosion(collision)
         if not self.aliens:
             self._create_fleet()
+
+    def _create_explosion(self, collision):
+        for lists in collision.values():
+            for elmt in lists:
+                pos_x = elmt.rect.centerx
+                pos_y = elmt.rect.centery
+                self.explosions.add(Explosion(self, x=pos_x, y=pos_y))
 
     def _check_fleet_edges(self):
         """Change fleet direction if it reaches the screen edge"""
@@ -137,10 +144,11 @@ class AlienInvasion():
     def run_game(self):
         """Run main loop"""
         while True:
-            self.settings.clock.tick(self.settings.fps)     # TODO: Check this
+            self.settings.clock.tick(self.settings.fps)
             self._check_events()
             self.ship.update()
             self._update_bullets()
+            self.explosions.update()
             self._update_aliens()
             self._update_screen()
 
