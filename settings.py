@@ -1,8 +1,15 @@
+import pygame
+
+
 class Settings():
     """Class containing game configuration"""
 
     def __init__(self):
         """Initialize game settings"""
+        # Time settings
+        self.clock = pygame.time.Clock()
+        self.fps = 140
+
         # Ship settings
         self.ship_speed = 3
 
@@ -12,6 +19,6 @@ class Settings():
 
         # Alien settings
         self.alien_speed = 1
-        self.alien_descend_speed = 10
+        self.alien_descend_speed = 15
         # fleet_dir = 1 -> moving right; = -1 -> moving left
         self.fleet_dir = 1
