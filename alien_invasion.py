@@ -117,6 +117,8 @@ class AlienInvasion():
             self._create_fleet()
 
     def _create_explosion(self, collision):
+        """Add Explosion object to sprite group
+        according to collision coordinates"""
         for lists in collision.values():
             for elmt in lists:
                 pos_x = elmt.rect.centerx
