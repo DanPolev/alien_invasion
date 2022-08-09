@@ -25,7 +25,7 @@ class Explosion(Sprite):
             self.images.append(image)
 
     def update(self):
-        """Update explosion images"""
+        """Update explosion animation"""
         explosion_time = 10
         # update explosion animation
         self.counter += 1

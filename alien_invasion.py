@@ -1,11 +1,14 @@
 import sys
 import pygame
+from time import sleep
 
 from settings import Settings
+from game_stats import GameStats
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
 from explosion import Explosion
+
 
 
 class AlienInvasion():
@@ -15,10 +18,10 @@ class AlienInvasion():
         """Initialize game and create game resources"""
         pygame.init()
         self.settings = Settings()
-        self.screen = pygame.display.set_mode(
-            (0, 0), pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.screen_rect = self.screen.get_rect()
         pygame.display.set_caption("Alien Invasion by DanPolev")
+        self.stats = GameStats(self)
 
         self.ship = Ship(self)
         self.bg_image = pygame.image.load("images/space_background.bmp")
@@ -32,7 +35,7 @@ class AlienInvasion():
         """Create alien fleet"""
         alien = Alien(self)
         avail_space_x = self.screen_rect.w - 2 * alien.rect.w
-        avail_space_y = self.screen_rect.h - 2 * alien.rect.h -self.ship.rect.h
+        avail_space_y = self.screen_rect.h - 2 * alien.rect.h - self.ship.rect.h
         number_aliens_x = avail_space_x // (2 * alien.rect.w)
         number_aliens_y = avail_space_y // (2 * alien.rect.h)
 
@@ -90,14 +93,19 @@ class AlienInvasion():
         """Update screen state"""
         # Update background
         self._blit_bg_image()
+
         # Update ship state
         self.ship.blitme()
+
         # Draw bullets
         self.bullets.draw(self.screen)
+
         # Draw an alien
         self.aliens.draw(self.screen)
+
         # Draw an explosion
         self.explosions.draw(self.screen)
+
         # Display last drawn screen
         pygame.display.flip()
 
@@ -142,6 +150,24 @@ class AlienInvasion():
         """Update positions of all aliens in the fleet"""
         self._check_fleet_edges()
         self.aliens.update()
+        if pygame.sprite.spritecollideany(self.ship, self.aliens):
+            self._ship_hit()
+
+    def _ship_hit(self):
+        """Process ship hitting"""
+        # Reduce player ships limit
+        self.settings.ship_limit -= 1
+
+        # Remove aliens & bullets from the screen
+        self.aliens.empty()
+        self.bullets.empty()
+
+        # Create new alien fleet and center the ship
+        self._create_fleet()
+        self.ship.center_ship()
+
+        # Pause
+        sleep(0.5)
 
     def run_game(self):
         """Run main loop"""
