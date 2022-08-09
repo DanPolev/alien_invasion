@@ -122,6 +122,7 @@ class AlienInvasion():
         if collision:
             self._create_explosion(collision)
         if not self.aliens:
+            self.bullets.empty()
             self._create_fleet()
 
     def _create_explosion(self, collision):
@@ -150,8 +151,12 @@ class AlienInvasion():
         """Update positions of all aliens in the fleet"""
         self._check_fleet_edges()
         self.aliens.update()
+
+        # Check ship-alien collision
         if pygame.sprite.spritecollideany(self.ship, self.aliens):
             self._ship_hit()
+
+        # Check if alien reach the bottom of the screen
         self._check_aliens_bottom()
 
     def _ship_hit(self):
@@ -159,16 +164,19 @@ class AlienInvasion():
         # Reduce player ships limit
         self.settings.ship_limit -= 1
 
-        # Remove aliens & bullets from the screen
-        self.aliens.empty()
-        self.bullets.empty()
+        if self.settings.ship_limit > 0:
+            # Remove aliens & bullets from the screen
+            self.aliens.empty()
+            self.bullets.empty()
 
-        # Create new alien fleet and center the ship
-        self._create_fleet()
-        self.ship.center_ship()
+            # Create new alien fleet and center the ship
+            self._create_fleet()
+            self.ship.center_ship()
 
-        # Pause
-        sleep(0.5)
+            # Pause
+            sleep(0.5)  # TODO: add destroying the ship animation
+        else:
+            self.stats.game_active = False
 
     def _check_aliens_bottom(self):
         """Check if aliens reach the bottom of the screen"""
@@ -182,10 +190,13 @@ class AlienInvasion():
         while True:
             self.settings.clock.tick(self.settings.fps)
             self._check_events()
-            self.ship.update()
-            self._update_bullets()
-            self.explosions.update()
-            self._update_aliens()
+
+            if self.stats.game_active:
+                self.ship.update()
+                self._update_bullets()
+                self.explosions.update()
+                self._update_aliens()
+
             self._update_screen()
 
 
