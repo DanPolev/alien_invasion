@@ -19,7 +19,7 @@ class Settings():
         self.max_bullets = 3
 
         # Alien settings
-        self.alien_speed = 1
+        self.alien_speed = 10
         self.alien_descend_speed = 15
         # fleet_dir = 1 -> moving right; = -1 -> moving left
         self.fleet_dir = 1
