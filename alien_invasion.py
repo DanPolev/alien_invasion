@@ -75,7 +75,14 @@ class AlienInvasion():
     def _check_play_button(self, mouse_pos):
         """Checks if play button pressed"""
         if self.play_button.rect.collidepoint(mouse_pos):
+            self.stats.reset_stats()
             self.stats.game_active = True
+
+            # Clear aliens & bullets lists
+            self.aliens.empty()
+            self.bullets.empty()
+
+
 
     def _check_keyup_events(self, event):
         """Process keyup events"""
@@ -189,7 +196,7 @@ class AlienInvasion():
             self.ship.center_ship()
 
             # Pause
-            sleep(0.5)  # TODO: add ship destroying animation
+            sleep(0.5)  # TODO: add player ship destroying animation
         else:
             self.stats.game_active = False
 
