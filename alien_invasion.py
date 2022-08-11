@@ -78,11 +78,8 @@ class AlienInvasion():
             self.stats.reset_stats()
             self.stats.game_active = True
 
-            # Clear aliens & bullets lists
-            self.aliens.empty()
-            self.bullets.empty()
-
-
+            # Reset screen objects: aliens, ship, bullets
+            self._reset_game()
 
     def _check_keyup_events(self, event):
         """Process keyup events"""
@@ -187,18 +184,21 @@ class AlienInvasion():
         self.settings.ship_limit -= 1
 
         if self.settings.ship_limit > 0:
-            # Remove aliens & bullets from the screen
-            self.aliens.empty()
-            self.bullets.empty()
-
-            # Create new alien fleet and center the ship
-            self._create_fleet()
-            self.ship.center_ship()
-
+            self._reset_game()
             # Pause
             sleep(0.5)  # TODO: add player ship destroying animation
         else:
             self.stats.game_active = False
+
+    def _reset_game(self):
+        """Reset game parameters"""
+        # Remove aliens & bullets from the screen
+        self.aliens.empty()
+        self.bullets.empty()
+
+        # Create new alien fleet and center the ship
+        self._create_fleet()
+        self.ship.center_ship()
 
     def _check_aliens_bottom(self):
         """Check if aliens reach the bottom of the screen"""
