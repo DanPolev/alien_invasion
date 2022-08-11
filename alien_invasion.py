@@ -78,9 +78,10 @@ class AlienInvasion():
         if button_clicked and not self.stats.game_active:
             self.stats.reset_stats()
             self.stats.game_active = True
-
             # Reset screen objects: aliens, ship, bullets
             self._reset_game()
+            # Hide mouse cursor
+            pygame.mouse.set_visible(False)
 
     def _check_keyup_events(self, event):
         """Process keyup events"""
@@ -109,16 +110,12 @@ class AlienInvasion():
         """Update screen state"""
         # Update background
         self._blit_bg_image()
-
         # Update ship state
         self.ship.blitme()
-
         # Draw bullets
         self.bullets.draw(self.screen)
-
         # Draw an alien
         self.aliens.draw(self.screen)
-
         # Draw an explosion
         self.explosions.draw(self.screen)
 
