@@ -76,6 +76,8 @@ class AlienInvasion():
         """Checks if play button pressed"""
         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
         if button_clicked and not self.stats.game_active:
+            # Reset dynamic game settings before game start
+            self.settings.init_dynamic_settings()
             self._start_game()
 
     def _check_keyup_events(self, event):
@@ -149,6 +151,7 @@ class AlienInvasion():
             self._create_explosion(collision)
         if not self.aliens:
             self.bullets.empty()
+            self.settings.increase_speed()
             self._create_fleet()
 
     def _create_explosion(self, collision):
