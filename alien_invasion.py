@@ -31,8 +31,22 @@ class AlienInvasion():
 
         self._create_fleet()
 
-        # Create Play button
-        self.play_button = Button(self, "Play")
+        # Create buttons
+        self.buttons_dict = {"Play" : Button(self, "Play"),
+                             "Easy" : Button(self, "Easy"),
+                             "Medium" : Button(self, "Medium"),
+                             "Hard" : Button(self, "Hard")}
+        self._place_buttons()
+
+    def _place_buttons(self):
+        """Place buttons on the screen"""
+        i = 0
+        for key, button in self.buttons_dict.items():
+            if key != "Play":
+                button.move_button(self.screen_rect.centerx,
+                                   self.screen_rect.centery +
+                                   Button(self, " ").rect.h * i)
+                i += 1
 
     def _create_fleet(self):
         """Create alien fleet"""
@@ -70,15 +84,35 @@ class AlienInvasion():
                 self._check_keyup_events(event)
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                self._check_play_button(mouse_pos)
+                self._check_button(mouse_pos)
+                self._execute_button()
 
-    def _check_play_button(self, mouse_pos):
-        """Checks if play button pressed"""
-        button_clicked = self.play_button.rect.collidepoint(mouse_pos)
-        if button_clicked and not self.stats.game_active:
-            # Reset dynamic game settings before game start
-            self.settings.init_dynamic_settings()
-            self._start_game()
+    def _check_button(self, mouse_pos):
+        """Checks if a button pressed"""
+        play_button = self.buttons_dict["Play"]
+        for key, button in self.buttons_dict.items():
+            if key == "Play" and not play_button.is_pressed:
+                play_button.is_pressed = play_button.rect.collidepoint(
+                    mouse_pos)
+                break
+            if (key != "Play" and
+                    button.rect.collidepoint(mouse_pos) and
+                    self.buttons_dict["Play"].is_pressed):
+                button.is_pressed = True
+                break
+
+    def _execute_button(self):
+        """Execute pressed button functionality"""
+        if self.buttons_dict["Play"].is_pressed:
+            for key, button in self.buttons_dict.items():
+                if (key != "Play" and
+                        button.is_pressed and
+                        not self.stats.game_active):
+                    self.settings.speedup_scale = self.settings.difficulties[key]
+
+                    # Reset dynamic game settings before game start
+                    self.settings.init_dynamic_settings()
+                    self._start_game()
 
     def _check_keyup_events(self, event):
         """Process keyup events"""
@@ -96,7 +130,7 @@ class AlienInvasion():
         elif event.key == pygame.K_SPACE:
             self._fire()
         elif event.key == pygame.K_p:
-            self._start_game()
+            self.buttons_dict["Play"].is_pressed = True
         elif event.key == pygame.K_ESCAPE:
             sys.exit()
 
@@ -131,8 +165,14 @@ class AlienInvasion():
         self.explosions.draw(self.screen)
 
         # Display Play button if the game is not active
-        if not self.stats.game_active:
-            self.play_button.draw_button()
+        if not self.buttons_dict["Play"].is_pressed:
+            self.buttons_dict["Play"].draw_button()
+
+        if (self.buttons_dict["Play"].is_pressed and
+                not self.stats.game_active):
+            for key, button in self.buttons_dict.items():
+                if key != "Play":
+                    button.draw_button()
 
         # Display last drawn screen
         pygame.display.flip()

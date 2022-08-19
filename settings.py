@@ -10,6 +10,9 @@ class Settings():
         self.clock = pygame.time.Clock()
         self.fps = 140
 
+        # Difficulty settings
+        self.difficulties = {"Easy" : 1.1, "Medium" : 1.25, "Hard" : 1.5}
+
         # Ship settings
         self.ship_limit = 3
 
@@ -31,6 +34,9 @@ class Settings():
 
         # fleet_dir = 1 -> moving right; = -1 -> moving left
         self.fleet_dir = 1
+
+        # Set difficulty level up
+        self.increase_speed()
 
     def increase_speed(self):
         self.ship_speed *= self.speedup_scale

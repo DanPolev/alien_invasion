@@ -17,6 +17,9 @@ class Button():
         self.text_color = (255, 255, 255)
         self.font = pygame.font.SysFont(None, 48)
 
+        # Is button pressed
+        self.is_pressed = False
+
         self._prep_msg(msg)
 
     def _prep_msg(self, msg):
@@ -29,3 +32,8 @@ class Button():
         """Display an empty button & message afterwards"""
         self.screen.blit(self.image, self.rect)
         self.screen.blit(self.msg_image, self.msg_image_rect)
+
+    def move_button(self, centerx, centery):
+        self.rect.centerx = centerx
+        self.rect.centery = centery
+        self.msg_image_rect.center = self.rect.center
