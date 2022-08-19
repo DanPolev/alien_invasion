@@ -12,7 +12,7 @@ class Bullet(Sprite):
         self.settings = ai_game.settings
 
         # Create a bullet
-        self.image = pygame.image.load("images/bullet.bmp")
+        self.image = pygame.image.load("images/bullet.bmp").convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.midtop = ai_game.ship.rect.midtop
 

@@ -10,7 +10,7 @@ class Ship():
         self.settings = ai_game.settings
 
         # Load spaceship image, get rectangle
-        self.image = pygame.image.load("images/spaceship.bmp")
+        self.image = pygame.image.load("images/spaceship.bmp").convert_alpha()
         self.rect = self.image.get_rect()
 
         # Set initial ship position

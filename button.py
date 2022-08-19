@@ -8,7 +8,7 @@ class Button():
         self.screen_rect = self.screen.get_rect()
 
         # Button figure
-        self.image = pygame.image.load("images/button.bmp")
+        self.image = pygame.image.load("images/button.bmp").convert_alpha()
         self.image = pygame.transform.scale(self.image, (200, 80))
         self.rect = self.image.get_rect()
         self.rect.center = self.screen_rect.center

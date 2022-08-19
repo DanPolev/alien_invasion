@@ -20,7 +20,7 @@ class Explosion(Sprite):
         """Loads explosion images & put them in the list"""
         img_num = 3
         for i in range(img_num):
-            image = pygame.image.load(f"images/exp{i}.bmp")
+            image = pygame.image.load(f"images/exp{i}.bmp").convert_alpha()
             image = pygame.transform.scale(image, (90, 90))
             self.images.append(image)
 

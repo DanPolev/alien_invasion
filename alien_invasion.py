@@ -24,7 +24,7 @@ class AlienInvasion():
         self.stats = GameStats(self)
 
         self.ship = Ship(self)
-        self.bg_image = pygame.image.load("images/space_background.bmp")
+        self.bg_image = pygame.image.load("images/space_background.bmp").convert_alpha()
         self.bullets = pygame.sprite.Group()
         self.aliens = pygame.sprite.Group()
         self.explosions = pygame.sprite.Group()
@@ -218,7 +218,6 @@ class AlienInvasion():
     def run_game(self):
         """Run main loop"""
         while True:
-            self.settings.clock.tick(self.settings.fps)
             self._check_events()
 
             if self.stats.game_active:
@@ -228,6 +227,7 @@ class AlienInvasion():
                 self._update_aliens()
 
             self._update_screen()
+            self.settings.clock.tick(self.settings.fps)
 
 
 if __name__ == "__main__":
