@@ -11,7 +11,7 @@ class Settings():
         self.fps = 140
 
         # Difficulty settings
-        self.difficulties = {"Easy" : 1.1, "Medium" : 1.25, "Hard" : 1.5}
+        self.difficulties = {"Easy" : 1.1, "Medium" : 1.25, "Hard" : 1.4}
 
         # Ship settings
         self.ship_limit = 3
@@ -22,9 +22,12 @@ class Settings():
         # Alien settings
         self.alien_descend_speed = 10
         self.alien_points = 20
+        self.score_scales = {"Easy": 1, "Medium": 1.2, "Hard": 2}
 
         # Game speedup ratio
         self.speedup_scale = 1
+        self.score_scale = 1
+
 
         self.init_dynamic_settings()
 

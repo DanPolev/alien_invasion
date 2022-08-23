@@ -111,6 +111,7 @@ class AlienInvasion():
                         button.is_pressed and
                         not self.stats.game_active):
                     self.settings.speedup_scale = self.settings.difficulties[key]
+                    self.settings.score_scale = self.settings.score_scales[key]
 
                     # Reset dynamic game settings before game start
                     self.settings.init_dynamic_settings()
@@ -130,7 +131,7 @@ class AlienInvasion():
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
         elif (event.key == pygame.K_SPACE and
-            self.buttons_dict["Play"].is_pressed):
+            self.stats.game_active):
             self._fire()
         elif event.key == pygame.K_p:
             self.buttons_dict["Play"].is_pressed = True
@@ -178,7 +179,6 @@ class AlienInvasion():
         self.aliens.draw(self.screen)
         # Draw an explosion
         self.explosions.draw(self.screen)
-
         # Display scoreboard
         self.scoreboard.show_score()
 
@@ -199,15 +199,21 @@ class AlienInvasion():
             self.bullets, self.aliens, True, True)
         if collision:
             self._create_explosion(collision)
-            # Scoring for all destroyed aliens (even in case one bullet)
+            # Scoring for all destroyed aliens
+            # (even in case one bullet collision)
             for aliens in collision.values():
                 self.stats.score += self.settings.alien_points * len(aliens)
             self.scoreboard.prep_score()
+            self.scoreboard.check_high_score()
 
         if not self.aliens:
+            # Clear current bullets & create new fleet
             self.bullets.empty()
             self.settings.increase_speed()
             self._create_fleet()
+            # Increase the level
+            self.stats.lvl += 1
+            self.scoreboard.prep_lvl()
 
     def _create_explosion(self, collision):
         """Add Explosion object to sprite group
@@ -246,15 +252,17 @@ class AlienInvasion():
     def _ship_hit(self):
         """Process ship hitting"""
         # Reduce player ships limit
-        self.settings.ship_limit -= 1
+        self.stats.ships_left -= 1
+        self.scoreboard.prep_ships()
 
-        if self.settings.ship_limit > 0:
+        if self.stats.ships_left > 0:
             self._reset_game()
             # Pause
             sleep(0.5)  # TODO: add player ship destroying animation
         else:
             for button in self.buttons_dict.values():
                 button.is_pressed = False
+
             self.stats.game_active = False
             pygame.mouse.set_visible(True)
 
