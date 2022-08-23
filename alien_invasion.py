@@ -9,6 +9,7 @@ from bullet import Bullet
 from alien import Alien
 from explosion import Explosion
 from button import Button
+from scoreboard import Scoreboard
 
 
 class AlienInvasion():
@@ -22,6 +23,7 @@ class AlienInvasion():
         self.screen_rect = self.screen.get_rect()
         pygame.display.set_caption("Alien Invasion by DanPolev")
         self.stats = GameStats(self)
+        self.scoreboard = Scoreboard(self)
 
         self.ship = Ship(self)
         self.bg_image = pygame.image.load("images/space_background.bmp").convert_alpha()
@@ -127,7 +129,8 @@ class AlienInvasion():
             self.ship.moving_right = True
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
-        elif event.key == pygame.K_SPACE:
+        elif (event.key == pygame.K_SPACE and
+            self.buttons_dict["Play"].is_pressed):
             self._fire()
         elif event.key == pygame.K_p:
             self.buttons_dict["Play"].is_pressed = True
@@ -140,6 +143,7 @@ class AlienInvasion():
             set game flag in True"""
         if not self.stats.game_active:
             self.stats.reset_stats()
+            self.scoreboard.prep_score()
             self.stats.game_active = True
             # Reset screen objects: aliens, ship, bullets
             self._reset_game()
@@ -163,6 +167,9 @@ class AlienInvasion():
         self.aliens.draw(self.screen)
         # Draw an explosion
         self.explosions.draw(self.screen)
+
+        # Display scoreboard
+        self.scoreboard.show_score()
 
         # Display Play button if the game is not active
         if not self.buttons_dict["Play"].is_pressed:
@@ -189,6 +196,11 @@ class AlienInvasion():
             self.bullets, self.aliens, True, True)
         if collision:
             self._create_explosion(collision)
+            # Scoring for all destroyed aliens (even in case one bullet)
+            for aliens in collision.values():
+                self.stats.score += self.settings.alien_points * len(aliens)
+            self.scoreboard.prep_score()
+
         if not self.aliens:
             self.bullets.empty()
             self.settings.increase_speed()

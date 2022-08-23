@@ -21,6 +21,7 @@ class Settings():
 
         # Alien settings
         self.alien_descend_speed = 10
+        self.alien_points = 20
 
         # Game speedup ratio
         self.speedup_scale = 1.5
@@ -35,7 +36,7 @@ class Settings():
         # fleet_dir = 1 -> moving right; = -1 -> moving left
         self.fleet_dir = 1
 
-        # Set difficulty level up
+        # Set difficulty level
         self.increase_speed()
 
     def increase_speed(self):
