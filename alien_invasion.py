@@ -22,7 +22,9 @@ class AlienInvasion():
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.screen_rect = self.screen.get_rect()
         pygame.display.set_caption("Alien Invasion by DanPolev")
+
         self.stats = GameStats(self)
+        self.stats.load_stats()
         self.scoreboard = Scoreboard(self)
 
         self.ship = Ship(self)
@@ -268,6 +270,7 @@ class AlienInvasion():
                 button.is_pressed = False
 
             self.stats.game_active = False
+            self.stats.write_stats()
             pygame.mouse.set_visible(True)
 
     def _reset_game(self):
