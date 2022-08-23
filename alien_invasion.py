@@ -155,6 +155,17 @@ class AlienInvasion():
         if len(self.bullets) < self.settings.max_bullets:
             self.bullets.add(Bullet(self))
 
+    def _display_buttons(self):
+        """Display buttons if they are pressed"""
+        if not self.buttons_dict["Play"].is_pressed:
+            self.buttons_dict["Play"].draw_button()
+
+        if (self.buttons_dict["Play"].is_pressed and
+                not self.stats.game_active):
+            for key, button in self.buttons_dict.items():
+                if key != "Play":
+                    button.draw_button()
+
     def _update_screen(self):
         """Update screen state"""
         # Update background
@@ -171,15 +182,7 @@ class AlienInvasion():
         # Display scoreboard
         self.scoreboard.show_score()
 
-        # Display Play button if the game is not active
-        if not self.buttons_dict["Play"].is_pressed:
-            self.buttons_dict["Play"].draw_button()
-
-        if (self.buttons_dict["Play"].is_pressed and
-                not self.stats.game_active):
-            for key, button in self.buttons_dict.items():
-                if key != "Play":
-                    button.draw_button()
+        self._display_buttons()
 
         # Display last drawn screen
         pygame.display.flip()
