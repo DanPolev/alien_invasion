@@ -238,6 +238,8 @@ class AlienInvasion():
             # Pause
             sleep(0.5)  # TODO: add player ship destroying animation
         else:
+            for button in self.buttons_dict.values():
+                button.is_pressed = False
             self.stats.game_active = False
             pygame.mouse.set_visible(True)
 
