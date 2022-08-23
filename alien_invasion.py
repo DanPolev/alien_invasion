@@ -116,6 +116,7 @@ class AlienInvasion():
                     # Reset dynamic game settings before game start
                     self.settings.init_dynamic_settings()
                     self._start_game()
+                    break
 
     def _check_keyup_events(self, event):
         """Process keyup events"""
@@ -199,12 +200,7 @@ class AlienInvasion():
             self.bullets, self.aliens, True, True)
         if collision:
             self._create_explosion(collision)
-            # Scoring for all destroyed aliens
-            # (even in case one bullet collision)
-            for aliens in collision.values():
-                self.stats.score += self.settings.alien_points * len(aliens)
-            self.scoreboard.prep_score()
-            self.scoreboard.check_high_score()
+            self._score_collision(collision)
 
         if not self.aliens:
             # Clear current bullets & create new fleet
@@ -214,6 +210,14 @@ class AlienInvasion():
             # Increase the level
             self.stats.lvl += 1
             self.scoreboard.prep_lvl()
+
+    def _score_collision(self, collision):
+        """Score collision for all destroyed aliens
+           (even in case one bullet collision)"""
+        for aliens in collision.values():
+            self.stats.score += self.settings.alien_points * len(aliens)
+        self.scoreboard.prep_score()
+        self.scoreboard.check_high_score()
 
     def _create_explosion(self, collision):
         """Add Explosion object to sprite group
