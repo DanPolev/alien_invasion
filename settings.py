@@ -24,7 +24,7 @@ class Settings():
         self.alien_points = 20
 
         # Game speedup ratio
-        self.speedup_scale = 1.5
+        self.speedup_scale = 1
 
         self.init_dynamic_settings()
 
@@ -44,3 +44,4 @@ class Settings():
         self.alien_speed *= self.speedup_scale
         self.bullet_speed *= self.speedup_scale
 
+        self.alien_points = int(self.alien_points * self.speedup_scale)
