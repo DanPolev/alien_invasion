@@ -21,13 +21,11 @@ class Settings():
 
         # Alien settings
         self.alien_descend_speed = 10
-        self.alien_points = 20
         self.score_scales = {"Easy": 1, "Medium": 1.2, "Hard": 2}
 
         # Game speedup ratio
         self.speedup_scale = 1
         self.score_scale = 1
-
 
         self.init_dynamic_settings()
 
@@ -35,6 +33,7 @@ class Settings():
         self.ship_speed = 3
         self.alien_speed = 3
         self.bullet_speed = 4
+        self.alien_points = 20
 
         # fleet_dir = 1 -> moving right; = -1 -> moving left
         self.fleet_dir = 1
