@@ -205,13 +205,18 @@ class AlienInvasion():
             self._score_collision(collision)
 
         if not self.aliens:
-            # Clear current bullets & create new fleet
-            self.bullets.empty()
-            self.settings.increase_speed()
-            self._create_fleet()
-            # Increase the level
-            self.stats.lvl += 1
-            self.scoreboard.prep_lvl()
+            self._start_new_level()
+
+    def _start_new_level(self):
+        """Start new game level with increased difficulty.
+        Recreate alien fleet"""
+        # Clear current bullets & create new fleet
+        self.bullets.empty()
+        self.settings.increase_speed()
+        self._create_fleet()
+        # Increase the level
+        self.stats.lvl += 1
+        self.scoreboard.prep_lvl()
 
     def _score_collision(self, collision):
         """Score collision for all destroyed aliens
