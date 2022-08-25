@@ -212,6 +212,7 @@ class AlienInvasion():
             self.scoreboard.prep_score()
             self.stats.lvl = 1
             self.scoreboard.prep_lvl()
+            self.scoreboard.prep_ships()
             self.stats.game_active = True
             # Reset screen objects: aliens, ship, bullets
             self._reset_game()
@@ -332,13 +333,17 @@ class AlienInvasion():
             # Pause
             sleep(0.5)  # TODO: add player ship destroying animation
         else:
-            #for button in self.buttons_dict.values():
-            #    button.is_pressed = False
-            self.buttons["Play"].clicked = False
+            self._end_game()
 
-            self.stats.game_active = False
-            self.stats.write_stats()
-            pygame.mouse.set_visible(True)
+    def _end_game(self):
+        for button in self.buttons.values():
+            button.clicked = False
+
+        self.menu_state = "start"
+        self.show_menu = True
+        self.stats.game_active = False
+        self.stats.write_stats()
+        pygame.mouse.set_visible(True)
 
     def _reset_game(self):
         """Reset game parameters"""
