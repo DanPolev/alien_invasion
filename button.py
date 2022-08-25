@@ -1,24 +1,24 @@
 import pygame.font
 
+
 class Button():
     """Button class"""
-    def __init__(self, ai_game, msg):
+    def __init__(self, image, centerx=0, centery=0, scale=1, msg=""):
         """Button attributes initialization"""
-        self.screen = ai_game.screen
-        self.screen_rect = self.screen.get_rect()
-
         # Button figure
-        self.image = pygame.image.load("images/button.bmp").convert_alpha()
-        self.image = pygame.transform.scale(self.image, (200, 80))
+        width = image.get_width()
+        height = image.get_height()
+        self.image = pygame.transform.scale(image,
+                                            (width * scale, height * scale))
         self.rect = self.image.get_rect()
-        self.rect.center = self.screen_rect.center
+        self.rect.center = (centerx, centery)
+
+        # Is button clicked
+        self.clicked = False
 
         # Text properties
         self.text_color = (255, 255, 255)
         self.font = pygame.font.SysFont(None, 48)
-
-        # Is button pressed
-        self.is_pressed = False
 
         self._prep_msg(msg)
 
@@ -28,12 +28,12 @@ class Button():
         self.msg_image_rect = self.msg_image.get_rect()
         self.msg_image_rect.center = self.rect.center
 
-    def draw_button(self):
+    def draw_button(self, surface):
         """Display an empty button & message afterwards"""
-        self.screen.blit(self.image, self.rect)
-        self.screen.blit(self.msg_image, self.msg_image_rect)
+        surface.blit(self.image, self.rect)
+        surface.blit(self.msg_image, self.msg_image_rect)
 
-    def move_button(self, centerx, centery):
-        self.rect.centerx = centerx
-        self.rect.centery = centery
-        self.msg_image_rect.center = self.rect.center
+    #def move_button(self, centerx, centery):
+    #    self.rect.centerx = centerx
+    #    self.rect.centery = centery
+    #    self.msg_image_rect.center = self.rect.center
