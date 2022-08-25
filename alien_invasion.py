@@ -1,4 +1,3 @@
-import sys
 import pygame
 from time import sleep
 
@@ -18,6 +17,7 @@ class AlienInvasion():
     def __init__(self):
         """Initialize game and create game resources"""
         pygame.init()
+        self.run = True
         self.settings = Settings()
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.screen_rect = self.screen.get_rect()
@@ -35,22 +35,54 @@ class AlienInvasion():
 
         self._create_fleet()
 
-        # Create buttons
-        self.buttons_dict = {"Play" : Button(self, "Play"),
-                             "Easy" : Button(self, "Easy"),
-                             "Medium" : Button(self, "Medium"),
-                             "Hard" : Button(self, "Hard")}
-        self._place_buttons()
+        self.show_menu = True
+        self.menu_state = "start"
 
-    def _place_buttons(self):
-        """Place buttons on the screen"""
-        i = 0
-        for key, button in self.buttons_dict.items():
-            if key != "Play":
-                button.move_button(self.screen_rect.centerx,
-                                   self.screen_rect.centery +
-                                   Button(self, " ").rect.h * i)
-                i += 1
+        # Create buttons
+        self.buttons = {}
+        self.menu_states = {"main" : ["Resume", "Restart", "Quit"],
+                            "start" : ["Play", "Quit"],
+                            "difficulties" : ["Easy", "Medium", "Hard"],
+                             }
+        self._make_buttons()
+
+    def _make_buttons(self):
+        """Make all buttons"""
+        button_image = pygame.image.load("images/button.bmp").convert_alpha()
+
+        x_play = self.screen_rect.centerx
+        y_play = self.screen_rect.centery
+        play_button = Button(button_image, centerx=x_play, centery=y_play,
+                             scale=0.1, msg="Play")
+        self.buttons["Play"] = play_button
+
+        y_quit = y_play + 2 * play_button.rect.h
+        quit_button = Button(button_image, centerx=x_play, centery=y_quit,
+                             scale=0.1, msg="Quit")
+        self.buttons["Quit"] = quit_button
+
+        resume_button = Button(button_image, centerx=x_play, centery=y_play,
+                               scale=0.1, msg="Resume")
+        self.buttons["Resume"] = resume_button
+
+        y_restart = y_play + resume_button.rect.h
+        restart_button = Button(button_image, centerx=x_play,centery=y_restart,
+                                scale=0.1, msg="Restart")
+        self.buttons["Restart"] = restart_button
+
+        easy_button = Button(button_image, centerx=x_play, centery=y_play,
+                             scale=0.1, msg="Easy")
+        self.buttons["Easy"] = easy_button
+
+        y_medium = y_play + easy_button.rect.h
+        medium_button = Button(button_image, centerx=x_play, centery=y_medium,
+                               scale=0.1, msg="Medium")
+        self.buttons["Medium"] = medium_button
+
+        y_hard = y_medium + medium_button.rect.h
+        hard_button = Button(button_image, centerx=x_play, centery=y_hard,
+                             scale=0.1, msg="Hard")
+        self.buttons["Hard"] = hard_button
 
     def _create_fleet(self):
         """Create alien fleet"""
@@ -81,7 +113,7 @@ class AlienInvasion():
         """Process keyboard and mouse events"""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                sys.exit()
+                self.run = False
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
@@ -93,32 +125,57 @@ class AlienInvasion():
 
     def _check_button(self, mouse_pos):
         """Checks if a button pressed"""
-        play_button = self.buttons_dict["Play"]
-        for key, button in self.buttons_dict.items():
-            if key == "Play" and not play_button.is_pressed:
-                play_button.is_pressed = play_button.rect.collidepoint(
-                    mouse_pos)
-                break
-            if (key != "Play" and
-                    button.rect.collidepoint(mouse_pos) and
-                    self.buttons_dict["Play"].is_pressed):
-                button.is_pressed = True
-                break
+        if self.menu_state == "start" and self.show_menu:
+            self.buttons["Play"].clicked = self.buttons[
+                "Play"].rect.collidepoint(mouse_pos)
+            self.buttons["Quit"].clicked = self.buttons[
+                "Quit"].rect.collidepoint(mouse_pos)
+        elif self.menu_state == "main" and self.show_menu:
+            self.buttons["Resume"].clicked = self.buttons[
+                "Resume"].rect.collidepoint(mouse_pos)
+            self.buttons["Restart"].clicked = self.buttons[
+                "Restart"].rect.collidepoint(mouse_pos)
+            self.buttons["Quit"].clicked = self.buttons[
+                "Quit"].rect.collidepoint(mouse_pos)
+        elif self.menu_state == "difficulties" and self.show_menu:
+            self.buttons["Easy"].clicked = self.buttons[
+                "Easy"].rect.collidepoint(mouse_pos)
+            self.buttons["Medium"].clicked = self.buttons[
+                "Medium"].rect.collidepoint(mouse_pos)
+            self.buttons["Hard"].clicked = self.buttons[
+                "Hard"].rect.collidepoint(mouse_pos)
 
     def _execute_button(self):
         """Execute pressed button functionality"""
-        if self.buttons_dict["Play"].is_pressed:
-            for key, button in self.buttons_dict.items():
-                if (key != "Play" and
-                        button.is_pressed and
-                        not self.stats.game_active):
+        if self.menu_state == "start":
+            if self.buttons["Play"].clicked:
+                self.menu_state = "difficulties"
+            elif self.buttons["Quit"].clicked:
+                self.run = False
+        elif self.menu_state == "main":
+            if self.buttons["Resume"].clicked:
+                self.show_menu = False
+                self.stats.game_active = True
+                pygame.mouse.set_visible(False)
+            elif self.buttons["Restart"].clicked:
+                self.show_menu = False
+                self.stats.game_active = False
+                self.settings.init_dynamic_settings()
+                self._start_game()
+            elif self.buttons["Quit"].clicked:
+                self.run = False
+        elif self.menu_state == "difficulties":
+            self.show_menu = False
+            avail_buttons = self.menu_states[self.menu_state]
+            for key, button in self.buttons.items():
+                if key in avail_buttons and button.clicked:
                     self.settings.speedup_scale = self.settings.difficulties[key]
                     self.settings.score_scale = self.settings.score_scales[key]
-
-                    # Reset dynamic game settings before game start
-                    self.settings.init_dynamic_settings()
-                    self._start_game()
                     break
+            self.menu_state = "in-game"
+            self.settings.init_dynamic_settings()
+            self._start_game()
+
 
     def _check_keyup_events(self, event):
         """Process keyup events"""
@@ -137,9 +194,14 @@ class AlienInvasion():
             self.stats.game_active):
             self._fire()
         elif event.key == pygame.K_p:
-            self.buttons_dict["Play"].is_pressed = True
+            self.buttons["Play"].clicked = True
         elif event.key == pygame.K_ESCAPE:
-            sys.exit()
+            if (self.buttons["Play"].clicked and
+                    self.menu_state != "difficulties"):
+                self.menu_state = "main"
+                self.show_menu = not self.show_menu
+                self.stats.game_active = not self.stats.game_active
+                pygame.mouse.set_visible(not self.stats.game_active)
 
     def _start_game(self):
         """Start game: reset visible objects,
@@ -148,6 +210,8 @@ class AlienInvasion():
         if not self.stats.game_active:
             self.stats.reset_stats()
             self.scoreboard.prep_score()
+            self.stats.lvl = 1
+            self.scoreboard.prep_lvl()
             self.stats.game_active = True
             # Reset screen objects: aliens, ship, bullets
             self._reset_game()
@@ -161,14 +225,11 @@ class AlienInvasion():
 
     def _display_buttons(self):
         """Display buttons if they are pressed"""
-        if not self.buttons_dict["Play"].is_pressed:
-            self.buttons_dict["Play"].draw_button()
-
-        if (self.buttons_dict["Play"].is_pressed and
-                not self.stats.game_active):
-            for key, button in self.buttons_dict.items():
-                if key != "Play":
-                    button.draw_button()
+        if self.show_menu and not self.stats.game_active:
+            avail_buttons = self.menu_states[self.menu_state]
+            for key, button in self.buttons.items():
+                if key in avail_buttons:
+                    button.draw_button(self.screen)
 
     def _update_screen(self):
         """Update screen state"""
@@ -271,8 +332,9 @@ class AlienInvasion():
             # Pause
             sleep(0.5)  # TODO: add player ship destroying animation
         else:
-            for button in self.buttons_dict.values():
-                button.is_pressed = False
+            #for button in self.buttons_dict.values():
+            #    button.is_pressed = False
+            self.buttons["Play"].clicked = False
 
             self.stats.game_active = False
             self.stats.write_stats()
@@ -297,7 +359,7 @@ class AlienInvasion():
 
     def run_game(self):
         """Run main loop"""
-        while True:
+        while self.run:
             self._check_events()
 
             if self.stats.game_active:
