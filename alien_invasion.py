@@ -46,6 +46,11 @@ class AlienInvasion():
                              }
         self._make_buttons()
 
+        self.laser_sound = pygame.mixer.Sound("sounds/laser.wav")
+        self.explosion_sound = pygame.mixer.Sound("sounds/explosion.wav")
+        self.change_tab_sound = pygame.mixer.Sound("sounds/change_tab.wav")
+        self.losing_sound = pygame.mixer.Sound("sounds/losing.wav")
+
     def _make_buttons(self):
         """Make all buttons"""
         button_image = pygame.image.load("images/button.bmp").convert_alpha()
@@ -125,25 +130,30 @@ class AlienInvasion():
 
     def _check_button(self, mouse_pos):
         """Checks if a button pressed"""
-        if self.menu_state == "start" and self.show_menu:
-            self.buttons["Play"].clicked = self.buttons[
-                "Play"].rect.collidepoint(mouse_pos)
-            self.buttons["Quit"].clicked = self.buttons[
-                "Quit"].rect.collidepoint(mouse_pos)
-        elif self.menu_state == "main" and self.show_menu:
-            self.buttons["Resume"].clicked = self.buttons[
-                "Resume"].rect.collidepoint(mouse_pos)
-            self.buttons["Restart"].clicked = self.buttons[
-                "Restart"].rect.collidepoint(mouse_pos)
-            self.buttons["Quit"].clicked = self.buttons[
-                "Quit"].rect.collidepoint(mouse_pos)
-        elif self.menu_state == "difficulties" and self.show_menu:
-            self.buttons["Easy"].clicked = self.buttons[
-                "Easy"].rect.collidepoint(mouse_pos)
-            self.buttons["Medium"].clicked = self.buttons[
-                "Medium"].rect.collidepoint(mouse_pos)
-            self.buttons["Hard"].clicked = self.buttons[
-                "Hard"].rect.collidepoint(mouse_pos)
+        if self.show_menu:
+            #for button in self.buttons[self.menu_state]:
+            #    button.clicked = button.rect.collidepoint(mouse_pos)
+
+
+            if self.menu_state == "start":
+                self.buttons["Play"].clicked = self.buttons[
+                    "Play"].rect.collidepoint(mouse_pos)
+                self.buttons["Quit"].clicked = self.buttons[
+                    "Quit"].rect.collidepoint(mouse_pos)
+            elif self.menu_state == "main":
+                self.buttons["Resume"].clicked = self.buttons[
+                    "Resume"].rect.collidepoint(mouse_pos)
+                self.buttons["Restart"].clicked = self.buttons[
+                    "Restart"].rect.collidepoint(mouse_pos)
+                self.buttons["Quit"].clicked = self.buttons[
+                    "Quit"].rect.collidepoint(mouse_pos)
+            elif self.menu_state == "difficulties":
+                self.buttons["Easy"].clicked = self.buttons[
+                    "Easy"].rect.collidepoint(mouse_pos)
+                self.buttons["Medium"].clicked = self.buttons[
+                    "Medium"].rect.collidepoint(mouse_pos)
+                self.buttons["Hard"].clicked = self.buttons[
+                    "Hard"].rect.collidepoint(mouse_pos)
 
     def _execute_button(self):
         """Execute pressed button functionality"""
@@ -223,6 +233,7 @@ class AlienInvasion():
         """Make new bullet & add it to the bullets group"""
         if len(self.bullets) < self.settings.max_bullets:
             self.bullets.add(Bullet(self))
+            pygame.mixer.Sound.play(self.laser_sound)
 
     def _display_buttons(self):
         """Display buttons if they are pressed"""
@@ -298,6 +309,7 @@ class AlienInvasion():
                 self.explosions.add(Explosion(x=pos_x, y=pos_y,
                                               px_x=elmt.rect.w,
                                               px_y=elmt.rect.h))
+        pygame.mixer.Sound.play(self.explosion_sound)
 
     def _check_fleet_edges(self):
         """Change fleet direction if it reaches the screen edge"""
@@ -335,6 +347,7 @@ class AlienInvasion():
             # Pause
             sleep(0.5)  # TODO: add player ship destroying animation
         else:
+            pygame.mixer.Sound.play(self.losing_sound)
             self._end_game()
 
     def _end_game(self):
