@@ -1,10 +1,13 @@
-import pygame.font
+import pygame
 
 
 class Button():
     """Button class"""
-    def __init__(self, image, centerx=0, centery=0, scale=1, msg=""):
+    def __init__(self, game, image, centerx=0, centery=0, scale=1, msg=""):
         """Button attributes initialization"""
+        self.game = game
+        self.settings = self.game.settings
+
         # Button figure
         width = image.get_width()
         height = image.get_height()
@@ -22,6 +25,9 @@ class Button():
 
         self._prep_msg(msg)
 
+        # Flag for Restart and difficulties buttons to start/restart game
+        self.start_game = False
+
     def _prep_msg(self, msg):
         """Prepare message to be displayed"""
         self.msg_image = self.font.render(msg, True, self.text_color)
@@ -33,7 +39,54 @@ class Button():
         surface.blit(self.image, self.rect)
         surface.blit(self.msg_image, self.msg_image_rect)
 
-    #def move_button(self, centerx, centery):
-    #    self.rect.centerx = centerx
-    #    self.rect.centery = centery
-    #    self.msg_image_rect.center = self.rect.center
+    def execute(self):
+        pass
+
+
+class PlayButton(Button):
+    def __init__(self, game, image, centerx=0, centery=0, scale=1):
+        Button.__init__(self, game, image, centerx, centery, scale, "Play")
+
+    def execute(self):
+        self.game.menu_state = "difficulties"
+
+
+class ResumeButton(Button):
+    def __init__(self, game, image, centerx=0, centery=0, scale=1):
+        Button.__init__(self, game, image, centerx, centery, scale, "Resume")
+
+    def execute(self):
+        self.game.show_menu = False
+        self.game.stats.game_active = True
+        pygame.mouse.set_visible(False)
+
+
+class QuitButton(Button):
+    def __init__(self, game, image, centerx=0, centery=0, scale=1):
+        Button.__init__(self, game, image, centerx, centery, scale, "Quit")
+
+    def execute(self):
+        self.game.run = False
+
+
+class RestartButton(Button):
+    def __init__(self, game, image, centerx=0, centery=0, scale=1):
+        Button.__init__(self, game, image, centerx, centery, scale, "Restart")
+
+    def execute(self):
+        self.game.show_menu = False
+        self.game.stats.game_active = False
+        self.start_game = True
+
+
+class DifficultyButton(Button):
+    def __init__(self, game, image, msg, centerx=0, centery=0, scale=1):
+        Button.__init__(self, game, image, centerx, centery, scale, msg)
+        self.msg = msg
+
+    def execute(self):
+        self.game.show_menu = False
+        self.game.menu_state = "in-game"
+        self.start_game = True
+        self.settings.speedup_scale = self.settings.difficulties[self.msg]
+        self.settings.score_scale = self.settings.score_scales[self.msg]

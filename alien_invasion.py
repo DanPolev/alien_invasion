@@ -7,7 +7,7 @@ from ship import Ship
 from bullet import Bullet
 from alien import Alien
 from explosion import Explosion
-from button import Button
+import button
 from scoreboard import Scoreboard
 
 
@@ -35,17 +35,19 @@ class AlienInvasion():
 
         self._create_fleet()
 
+        # Menu states & flags
         self.show_menu = True
         self.menu_state = "start"
 
         # Create buttons
-        self.buttons = {}
-        self.menu_states = {"main" : ["Resume", "Restart", "Quit"],
-                            "start" : ["Play", "Quit"],
-                            "difficulties" : ["Easy", "Medium", "Hard"],
-                             }
+        self.buttons = {"start" : [],
+                        "main" : [],
+                        "difficulties" : [],
+                        "in-game" : []
+                        }
         self._make_buttons()
 
+        # Game sounds
         self.laser_sound = pygame.mixer.Sound("sounds/laser.wav")
         self.explosion_sound = pygame.mixer.Sound("sounds/explosion.wav")
         self.change_tab_sound = pygame.mixer.Sound("sounds/change_tab.wav")
@@ -57,37 +59,42 @@ class AlienInvasion():
 
         x_play = self.screen_rect.centerx
         y_play = self.screen_rect.centery
-        play_button = Button(button_image, centerx=x_play, centery=y_play,
-                             scale=0.1, msg="Play")
-        self.buttons["Play"] = play_button
+        play_button = button.PlayButton(self, button_image, centerx=x_play,
+                                        centery=y_play, scale=0.1)
+        self.buttons["start"].append(play_button)
 
         y_quit = y_play + 2 * play_button.rect.h
-        quit_button = Button(button_image, centerx=x_play, centery=y_quit,
-                             scale=0.1, msg="Quit")
-        self.buttons["Quit"] = quit_button
+        quit_button = button.QuitButton(self, button_image, centerx=x_play,
+                                        centery=y_quit, scale=0.1)
+        self.buttons["start"].append(quit_button)
+        self.buttons["main"].append(quit_button)
 
-        resume_button = Button(button_image, centerx=x_play, centery=y_play,
-                               scale=0.1, msg="Resume")
-        self.buttons["Resume"] = resume_button
+        resume_button = button.ResumeButton(self, button_image, centerx=x_play,
+                                            centery=y_play, scale=0.1)
+        self.buttons["main"].append(resume_button)
 
         y_restart = y_play + resume_button.rect.h
-        restart_button = Button(button_image, centerx=x_play,centery=y_restart,
-                                scale=0.1, msg="Restart")
-        self.buttons["Restart"] = restart_button
+        restart_button = button.RestartButton(self, button_image,
+                                              centerx=x_play, centery=y_restart,
+                                              scale=0.1)
+        self.buttons["main"].append(restart_button)
 
-        easy_button = Button(button_image, centerx=x_play, centery=y_play,
-                             scale=0.1, msg="Easy")
-        self.buttons["Easy"] = easy_button
+        easy_button = button.DifficultyButton(self,  button_image, "Easy",
+                                              centerx=x_play, centery=y_play,
+                                              scale=0.1)
+        self.buttons["difficulties"].append(easy_button)
 
         y_medium = y_play + easy_button.rect.h
-        medium_button = Button(button_image, centerx=x_play, centery=y_medium,
-                               scale=0.1, msg="Medium")
-        self.buttons["Medium"] = medium_button
+        medium_button = button.DifficultyButton(self, button_image, "Medium",
+                                                centerx=x_play,
+                                                centery=y_medium, scale=0.1)
+        self.buttons["difficulties"].append(medium_button)
 
         y_hard = y_medium + medium_button.rect.h
-        hard_button = Button(button_image, centerx=x_play, centery=y_hard,
-                             scale=0.1, msg="Hard")
-        self.buttons["Hard"] = hard_button
+        hard_button = button.DifficultyButton(self, button_image, "Hard",
+                                              centerx=x_play, centery=y_hard,
+                                              scale=0.1)
+        self.buttons["difficulties"].append(hard_button)
 
     def _create_fleet(self):
         """Create alien fleet"""
@@ -131,61 +138,18 @@ class AlienInvasion():
     def _check_button(self, mouse_pos):
         """Checks if a button pressed"""
         if self.show_menu:
-            #for button in self.buttons[self.menu_state]:
-            #    button.clicked = button.rect.collidepoint(mouse_pos)
-
-
-            if self.menu_state == "start":
-                self.buttons["Play"].clicked = self.buttons[
-                    "Play"].rect.collidepoint(mouse_pos)
-                self.buttons["Quit"].clicked = self.buttons[
-                    "Quit"].rect.collidepoint(mouse_pos)
-            elif self.menu_state == "main":
-                self.buttons["Resume"].clicked = self.buttons[
-                    "Resume"].rect.collidepoint(mouse_pos)
-                self.buttons["Restart"].clicked = self.buttons[
-                    "Restart"].rect.collidepoint(mouse_pos)
-                self.buttons["Quit"].clicked = self.buttons[
-                    "Quit"].rect.collidepoint(mouse_pos)
-            elif self.menu_state == "difficulties":
-                self.buttons["Easy"].clicked = self.buttons[
-                    "Easy"].rect.collidepoint(mouse_pos)
-                self.buttons["Medium"].clicked = self.buttons[
-                    "Medium"].rect.collidepoint(mouse_pos)
-                self.buttons["Hard"].clicked = self.buttons[
-                    "Hard"].rect.collidepoint(mouse_pos)
+            for button in self.buttons[self.menu_state]:
+                button.clicked = button.rect.collidepoint(mouse_pos)
 
     def _execute_button(self):
         """Execute pressed button functionality"""
-        if self.menu_state == "start":
-            if self.buttons["Play"].clicked:
-                self.menu_state = "difficulties"
-            elif self.buttons["Quit"].clicked:
-                self.run = False
-        elif self.menu_state == "main":
-            if self.buttons["Resume"].clicked:
-                self.show_menu = False
-                self.stats.game_active = True
-                pygame.mouse.set_visible(False)
-            elif self.buttons["Restart"].clicked:
-                self.show_menu = False
-                self.stats.game_active = False
-                self.settings.init_dynamic_settings()
-                self._start_game()
-            elif self.buttons["Quit"].clicked:
-                self.run = False
-        elif self.menu_state == "difficulties":
-            self.show_menu = False
-            avail_buttons = self.menu_states[self.menu_state]
-            for key, button in self.buttons.items():
-                if key in avail_buttons and button.clicked:
-                    self.settings.speedup_scale = self.settings.difficulties[key]
-                    self.settings.score_scale = self.settings.score_scales[key]
-                    break
-            self.menu_state = "in-game"
-            self.settings.init_dynamic_settings()
-            self._start_game()
-
+        for button in self.buttons[self.menu_state]:
+            if button.clicked:
+                button.execute()
+                if button.start_game:
+                    self.settings.init_dynamic_settings()
+                    self._start_game()
+                break
 
     def _check_keyup_events(self, event):
         """Process keyup events"""
@@ -206,8 +170,7 @@ class AlienInvasion():
         elif event.key == pygame.K_p:
             self.buttons["Play"].clicked = True
         elif event.key == pygame.K_ESCAPE:
-            if (self.buttons["Play"].clicked and
-                    self.menu_state != "difficulties"):
+            if self.menu_state == "in-game" or self.menu_state == "main":
                 self.menu_state = "main"
                 self.show_menu = not self.show_menu
                 self.stats.game_active = not self.stats.game_active
@@ -238,10 +201,8 @@ class AlienInvasion():
     def _display_buttons(self):
         """Display buttons if they are pressed"""
         if self.show_menu and not self.stats.game_active:
-            avail_buttons = self.menu_states[self.menu_state]
-            for key, button in self.buttons.items():
-                if key in avail_buttons:
-                    button.draw_button(self.screen)
+            for button in self.buttons[self.menu_state]:
+                button.draw_button(self.screen)
 
     def _update_screen(self):
         """Update screen state"""
@@ -351,8 +312,9 @@ class AlienInvasion():
             self._end_game()
 
     def _end_game(self):
-        for button in self.buttons.values():
-            button.clicked = False
+        for button_list in self.buttons.values():
+            for button in button_list:
+                button.clicked = False
 
         self.menu_state = "start"
         self.show_menu = True
