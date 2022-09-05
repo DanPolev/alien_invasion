@@ -4,24 +4,25 @@ from pygame.sprite import Sprite
 
 class Explosion(Sprite):
     """Create explosions"""
-    def __init__(self, game, x, y):
+    def __init__(self, x, y, px_x, px_y):
         """Initialize explosion fields"""
         super().__init__()
-        self.screen = game.screen
         self.images = []
         self.index = 0
         self.counter = 0
-        self._load_images()
+        self._load_images(px_x, px_y)
         self.image = self.images[self.index]
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
 
-    def _load_images(self):
+    def _load_images(self, px_x, px_y):
         """Loads explosion images & put them in the list"""
-        img_num = 3
+        filenames = ["exp0.bmp", "exp1.bmp", "exp2.bmp"]
+        img_num = len(filenames)
         for i in range(img_num):
-            image = pygame.image.load(f"images/exp{i}.bmp").convert_alpha()
-            image = pygame.transform.scale(image, (90, 90))
+            path = "images/" + filenames[i]
+            image = pygame.image.load(path).convert_alpha()
+            image = pygame.transform.scale(image, (px_x, px_y))
             self.images.append(image)
 
     def update(self):

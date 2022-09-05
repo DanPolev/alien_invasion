@@ -295,7 +295,9 @@ class AlienInvasion():
             for elmt in lists:
                 pos_x = elmt.rect.centerx
                 pos_y = elmt.rect.centery
-                self.explosions.add(Explosion(self, x=pos_x, y=pos_y))
+                self.explosions.add(Explosion(x=pos_x, y=pos_y,
+                                              px_x=elmt.rect.w,
+                                              px_y=elmt.rect.h))
 
     def _check_fleet_edges(self):
         """Change fleet direction if it reaches the screen edge"""
