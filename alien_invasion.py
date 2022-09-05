@@ -50,7 +50,7 @@ class AlienInvasion():
         # Game sounds
         self.laser_sound = pygame.mixer.Sound("sounds/laser.wav")
         self.explosion_sound = pygame.mixer.Sound("sounds/explosion.wav")
-        self.change_tab_sound = pygame.mixer.Sound("sounds/change_tab.wav")
+        self.button_sound = pygame.mixer.Sound("sounds/button.wav")
         self.losing_sound = pygame.mixer.Sound("sounds/losing.wav")
 
     def _make_buttons(self):
@@ -140,6 +140,8 @@ class AlienInvasion():
         if self.show_menu:
             for button in self.buttons[self.menu_state]:
                 button.clicked = button.rect.collidepoint(mouse_pos)
+                if button.clicked:
+                    pygame.mixer.Sound.play(self.button_sound)
 
     def _execute_button(self):
         """Execute pressed button functionality"""
@@ -167,8 +169,6 @@ class AlienInvasion():
         elif (event.key == pygame.K_SPACE and
             self.stats.game_active):
             self._fire()
-        elif event.key == pygame.K_p:
-            self.buttons["Play"].clicked = True
         elif event.key == pygame.K_ESCAPE:
             if self.menu_state == "in-game" or self.menu_state == "main":
                 self.menu_state = "main"
@@ -306,7 +306,7 @@ class AlienInvasion():
         if self.stats.ships_left > 0:
             self._reset_game()
             # Pause
-            sleep(0.5)  # TODO: add player ship destroying animation
+            sleep(0.5)
         else:
             pygame.mixer.Sound.play(self.losing_sound)
             self._end_game()
