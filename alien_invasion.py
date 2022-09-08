@@ -52,6 +52,8 @@ class AlienInvasion():
         self.explosion_sound = pygame.mixer.Sound("sounds/explosion.wav")
         self.button_sound = pygame.mixer.Sound("sounds/button.wav")
         self.losing_sound = pygame.mixer.Sound("sounds/losing.wav")
+        pygame.mixer.music.load("sounds/bg_music.mp3")
+        pygame.mixer.music.play(-1)
 
     def _make_buttons(self):
         """Make all buttons"""
@@ -191,6 +193,8 @@ class AlienInvasion():
             self._reset_game()
             # Hide mouse cursor
             pygame.mouse.set_visible(False)
+            # Unpause music
+            pygame.mixer.music.unpause()
 
     def _fire(self):
         """Make new bullet & add it to the bullets group"""
@@ -308,6 +312,7 @@ class AlienInvasion():
             # Pause
             sleep(0.5)
         else:
+            pygame.mixer.music.pause()
             pygame.mixer.Sound.play(self.losing_sound)
             self._end_game()
 
