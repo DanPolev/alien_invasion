@@ -40,51 +40,63 @@ class Button():
         surface.blit(self.msg_image, self.msg_image_rect)
 
     def execute(self):
+        """Execute button function"""
         pass
 
 
 class PlayButton(Button):
+    """PlayButton class"""
     def __init__(self, game, image, centerx=0, centery=0, scale=1):
         Button.__init__(self, game, image, centerx, centery, scale, "Play")
 
     def execute(self):
+        """Execute button function: switch menu_state to difficulty choice"""
         self.game.menu_state = "difficulties"
 
 
 class ResumeButton(Button):
+    """ResumeButton class"""
     def __init__(self, game, image, centerx=0, centery=0, scale=1):
         Button.__init__(self, game, image, centerx, centery, scale, "Resume")
 
     def execute(self):
+        """Execute button function: hide menu & cursor, resume game"""
         self.game.show_menu = False
         self.game.stats.game_active = True
         pygame.mouse.set_visible(False)
 
 
 class QuitButton(Button):
+    """QuitButton class"""
     def __init__(self, game, image, centerx=0, centery=0, scale=1):
         Button.__init__(self, game, image, centerx, centery, scale, "Quit")
 
     def execute(self):
+        """Execute button function: end game"""
         self.game.run = False
 
 
 class RestartButton(Button):
+    """RestartButton class"""
     def __init__(self, game, image, centerx=0, centery=0, scale=1):
         Button.__init__(self, game, image, centerx, centery, scale, "Restart")
 
     def execute(self):
+        """Execute button function: restart game process"""
         self.game.show_menu = False
         self.game.stats.game_active = False
         self.start_game = True
 
 
 class DifficultyButton(Button):
+    """DifficultyButton class"""
     def __init__(self, game, image, msg, centerx=0, centery=0, scale=1):
         Button.__init__(self, game, image, centerx, centery, scale, msg)
         self.msg = msg
 
     def execute(self):
+        """Execute button function: set difficulty &
+        speedup/score scales params"""
         self.game.show_menu = False
         self.game.menu_state = "in-game"
         self.start_game = True
