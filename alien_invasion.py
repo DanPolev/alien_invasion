@@ -48,10 +48,12 @@ class AlienInvasion():
         self._make_buttons()
 
         # Game sounds
+        pygame.mixer.init()
         self.laser_sound = pygame.mixer.Sound("sounds/laser.wav")
         self.explosion_sound = pygame.mixer.Sound("sounds/explosion.wav")
         self.button_sound = pygame.mixer.Sound("sounds/button.wav")
         self.losing_sound = pygame.mixer.Sound("sounds/losing.wav")
+        self.victory_sound = pygame.mixer.Sound("sounds/victory.wav")
         pygame.mixer.music.load("sounds/bg_music.mp3")
         pygame.mixer.music.play(-1)
 
@@ -143,7 +145,7 @@ class AlienInvasion():
             for button in self.buttons[self.menu_state]:
                 button.clicked = button.rect.collidepoint(mouse_pos)
                 if button.clicked:
-                    pygame.mixer.Sound.play(self.button_sound)
+                    self.button_sound.play()
 
     def _execute_button(self):
         """Execute pressed button functionality"""
@@ -200,7 +202,7 @@ class AlienInvasion():
         """Make new bullet & add it to the bullets group"""
         if len(self.bullets) < self.settings.max_bullets:
             self.bullets.add(Bullet(self))
-            pygame.mixer.Sound.play(self.laser_sound)
+            self.laser_sound.play()
 
     def _display_buttons(self):
         """Display buttons if they are pressed"""
@@ -274,7 +276,7 @@ class AlienInvasion():
                 self.explosions.add(Explosion(x=pos_x, y=pos_y,
                                               px_x=elmt.rect.w,
                                               px_y=elmt.rect.h))
-        pygame.mixer.Sound.play(self.explosion_sound)
+        self.explosion_sound.play()
 
     def _check_fleet_edges(self):
         """Change fleet direction if it reaches the screen edge"""
@@ -313,7 +315,10 @@ class AlienInvasion():
             sleep(0.5)
         else:
             pygame.mixer.music.pause()
-            pygame.mixer.Sound.play(self.losing_sound)
+            if self.stats.high_score > self.stats.score:
+                self.losing_sound.play()
+            else:
+                self.victory_sound.play()
             self._end_game()
 
     def _end_game(self):
