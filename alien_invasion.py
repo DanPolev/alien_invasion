@@ -9,6 +9,7 @@ from alien import Alien
 from explosion import Explosion
 import button
 from scoreboard import Scoreboard
+from message import Message, GroupMessage
 
 
 class AlienInvasion():
@@ -37,15 +38,20 @@ class AlienInvasion():
 
         # Menu states & flags
         self.show_menu = True
-        self.menu_state = "start"
+        self.menu_state = "main"
 
         # Create buttons
-        self.buttons = {"start" : [],
-                        "main" : [],
+        self.buttons = {"main" : [],
+                        "pause" : [],
                         "difficulties" : [],
-                        "in-game" : []
+                        "options" : [],
+                        "in-game" : [],
+                        "endgame" : []
                         }
         self._make_buttons()
+
+        # List with all message images
+        self.messages = GroupMessage()
 
         # Game sounds
         pygame.mixer.init()
@@ -65,23 +71,23 @@ class AlienInvasion():
         y_play = self.screen_rect.centery
         play_button = button.PlayButton(self, button_image, centerx=x_play,
                                         centery=y_play, scale=0.1)
-        self.buttons["start"].append(play_button)
+        self.buttons["main"].append(play_button)
 
         y_quit = y_play + 2 * play_button.rect.h
         quit_button = button.QuitButton(self, button_image, centerx=x_play,
                                         centery=y_quit, scale=0.1)
-        self.buttons["start"].append(quit_button)
         self.buttons["main"].append(quit_button)
+        self.buttons["pause"].append(quit_button)
 
         resume_button = button.ResumeButton(self, button_image, centerx=x_play,
                                             centery=y_play, scale=0.1)
-        self.buttons["main"].append(resume_button)
+        self.buttons["pause"].append(resume_button)
 
         y_restart = y_play + resume_button.rect.h
         restart_button = button.RestartButton(self, button_image,
                                               centerx=x_play, centery=y_restart,
                                               scale=0.1)
-        self.buttons["main"].append(restart_button)
+        self.buttons["pause"].append(restart_button)
 
         easy_button = button.DifficultyButton(self,  button_image, "Easy",
                                               centerx=x_play, centery=y_play,
@@ -170,12 +176,17 @@ class AlienInvasion():
             self.ship.moving_right = True
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
-        elif (event.key == pygame.K_SPACE and
-            self.stats.game_active):
+        elif event.key == pygame.K_SPACE and self.stats.game_active:
             self._fire()
-        elif event.key == pygame.K_ESCAPE:
-            if self.menu_state == "in-game" or self.menu_state == "main":
+        elif event.key == pygame.K_RETURN:
+            if self.menu_state == "endgame":
+                self.messages.eraseall()
                 self.menu_state = "main"
+                self.show_menu = True
+                pygame.mouse.set_visible(True)
+        elif event.key == pygame.K_ESCAPE:
+            if self.menu_state == "in-game" or self.menu_state == "pause":
+                self.menu_state = "pause"
                 self.show_menu = not self.show_menu
                 self.stats.game_active = not self.stats.game_active
                 pygame.mouse.set_visible(not self.stats.game_active)
@@ -224,6 +235,8 @@ class AlienInvasion():
         self.explosions.draw(self.screen)
         # Display scoreboard
         self.scoreboard.show_score()
+        # Display other related images
+        self.messages.draw(self.screen)
 
         self._display_buttons()
 
@@ -319,18 +332,37 @@ class AlienInvasion():
                 self.losing_sound.play()
             else:
                 self.victory_sound.play()
+            self._make_endgame_msg()
             self._end_game()
+
+    def _make_endgame_msg(self):
+        centerx = self.screen_rect.centerx
+        centery = self.screen_rect.centery - 100
+        msg = Message("GAME", centerx, centery, text_font=self.settings.font,
+                      text_size=100)
+        self.messages.add(msg)
+
+        centery += msg.rect.h
+        msg = Message("OVER!", centerx, centery, text_font=self.settings.font,
+                      text_size=100)
+        self.messages.add(msg)
+
+        centery += msg.rect.h
+        msg = Message("Press ENTER to continue", centerx, centery,
+                      text_font=self.settings.font)
+        self.messages.add(msg)
 
     def _end_game(self):
         for button_list in self.buttons.values():
             for button in button_list:
                 button.clicked = False
 
-        self.menu_state = "start"
-        self.show_menu = True
+        #self.menu_state = "start"
+        self.menu_state = "endgame"
+        #self.show_menu = True
         self.stats.game_active = False
         self.stats.write_stats()
-        pygame.mouse.set_visible(True)
+        #pygame.mouse.set_visible(True)
 
     def _reset_game(self):
         """Reset game parameters"""
