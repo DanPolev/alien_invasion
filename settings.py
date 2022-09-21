@@ -10,6 +10,9 @@ class Settings():
         self.clock = pygame.time.Clock()
         self.fps = 140
 
+        # Font settings
+        self.font = "bauhaus93"
+
         # Difficulty settings
         self.difficulties = {"Easy" : 1.1, "Medium" : 1.25, "Hard" : 1.4}
 
