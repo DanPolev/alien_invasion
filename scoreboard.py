@@ -3,6 +3,7 @@ from pygame.sprite import Group
 
 from ship import Ship
 
+
 class Scoreboard():
     """Game info output class"""
     def __init__(self, game):
@@ -15,7 +16,7 @@ class Scoreboard():
 
         # Font settings for score output
         self.text_color = (255, 255, 255)
-        self.font = pygame.font.SysFont(None, 48)
+        self.font = pygame.font.SysFont(self.settings.font, 48)
         # Prepare initial images
         self._prep_images()
 
@@ -35,7 +36,7 @@ class Scoreboard():
         # Output scoreboard at top-right corner
         self.score_rect = self.score_image.get_rect()
         self.score_rect.right = self.screen_rect.right - 20
-        self.score_rect.top = 20
+        self.score_rect.top = 0
 
     def prep_high_score(self):
         """Convert high score to the image"""

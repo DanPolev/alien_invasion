@@ -21,7 +21,7 @@ class Button():
 
         # Text properties
         self.text_color = (255, 255, 255)
-        self.font = pygame.font.SysFont(None, 48)
+        self.font = pygame.font.SysFont(self.settings.font, 46)
 
         self._prep_msg(msg)
 
@@ -102,3 +102,13 @@ class DifficultyButton(Button):
         self.start_game = True
         self.settings.speedup_scale = self.settings.difficulties[self.msg]
         self.settings.score_scale = self.settings.score_scales[self.msg]
+
+
+class OptionsButton(Button):
+    """OptionsButton class"""
+    def __init__(self, game, image, centerx=0, centery=0, scale=1):
+        Button.__init__(self, game, image, centerx, centery, scale, "Option")
+
+    def execute(self):
+        """Switch menu_state to options choice"""
+        self.game.menu_state = "options"
