@@ -5,7 +5,7 @@ from pygame.sprite import Sprite
 class Ship(Sprite):
     """Ship control class"""
 
-    def __init__(self, ai_game):
+    def __init__(self, ai_game) -> None:
         super().__init__()
         """Initialize the ship, set its initial position"""
         self.screen = ai_game.screen
@@ -26,11 +26,11 @@ class Ship(Sprite):
         self.moving_right = False
         self.moving_left = False
 
-    def blitme(self):
+    def blitme(self) -> None:
         """Draw the ship in current position"""
         self.screen.blit(self.image, self.rect)
 
-    def update(self):
+    def update(self) -> None:
         """Check moving flag, move the ship until flag is False"""
         if self.moving_right and self.rect.right < self.screen_rect.right:
             self.x += self.settings.ship_speed
@@ -38,6 +38,6 @@ class Ship(Sprite):
             self.x -= self.settings.ship_speed
         self.rect.x = self.x
 
-    def center_ship(self):
+    def center_ship(self) -> None:
         self.rect.midbottom = self.screen_rect.midbottom
         self.x = float(self.rect.x)

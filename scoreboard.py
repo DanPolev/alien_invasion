@@ -6,7 +6,7 @@ from ship import Ship
 
 class Scoreboard():
     """Game info output class"""
-    def __init__(self, game):
+    def __init__(self, game) -> None:
         """Initialize attributes for game scoring"""
         self.game = game
         self.screen = game.screen
@@ -20,13 +20,13 @@ class Scoreboard():
         # Prepare initial images
         self._prep_images()
 
-    def _prep_images(self):
+    def _prep_images(self) -> None:
         self.prep_score()
         self.prep_high_score()
         self.prep_lvl()
         self.prep_ships()
 
-    def prep_score(self):
+    def prep_score(self) -> None:
         """Convert current score to the image"""
         rounded_score = round(self.stats.score, -1)
         score_str = "Scores: {:,}".format(rounded_score)
@@ -38,7 +38,7 @@ class Scoreboard():
         self.score_rect.right = self.screen_rect.right - 20
         self.score_rect.top = 0
 
-    def prep_high_score(self):
+    def prep_high_score(self) -> None:
         """Convert high score to the image"""
         high_score = round(self.stats.high_score, -1)
         high_score_str = "Best: {:,}".format(high_score)
@@ -50,7 +50,7 @@ class Scoreboard():
         self.high_score_rect.centerx = self.screen_rect.centerx
         self.high_score_rect.top = self.screen_rect.top
 
-    def prep_lvl(self):
+    def prep_lvl(self) -> None:
         """Convert level to image"""
         lvl_str = f"Level: {self.stats.lvl}"
         self.lvl_image = self.font.render(lvl_str, True, self.text_color)
@@ -59,7 +59,7 @@ class Scoreboard():
         self.lvl_rect.right = self.score_rect.right
         self.lvl_rect.top = self.score_rect.bottom + 10
 
-    def prep_ships(self):
+    def prep_ships(self) -> None:
         """Draw number of remaining player ship images"""
         self.ships = Group()
         for ship_id in range(self.stats.ships_left):
@@ -71,12 +71,12 @@ class Scoreboard():
             ship.rect.y = 10
             self.ships.add(ship)
 
-    def check_high_score(self):
+    def check_high_score(self) -> None:
         if self.stats.score > self.stats.high_score:
             self.stats.high_score = self.stats.score
             self.prep_high_score()
 
-    def show_score(self):
+    def show_score(self) -> None:
         """Draw scoreboard onto the screen"""
         self.screen.blit(self.score_image, self.score_rect)
         self.screen.blit(self.high_score_image, self.high_score_rect)

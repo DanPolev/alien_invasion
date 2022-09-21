@@ -2,19 +2,19 @@ import os
 
 class GameStats():
     """Statistics tracking for the game"""
-    def __init__(self, ai_game):
+    def __init__(self, ai_game) -> None:
         self.settings = ai_game.settings
         self.reset_stats()
         self.game_active = False
         self.high_score = 0
 
-    def reset_stats(self):
+    def reset_stats(self) -> None:
         """Initialize the statistics changing during the game"""
         self.ships_left = self.settings.ship_limit
         self.score = 0
         self.lvl = 1
 
-    def load_stats(self):
+    def load_stats(self) -> None:
         """Load best result data"""
         if not os.path.isdir("local"):
             os.mkdir("local")
@@ -25,7 +25,7 @@ class GameStats():
             except FileNotFoundError:
                 pass
 
-    def write_stats(self):
+    def write_stats(self) -> None:
         """Write best result to the file"""
         with open("local/best_result.txt", "w") as f:
             f.write(str(round(self.high_score, -1)))

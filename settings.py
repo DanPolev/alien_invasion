@@ -4,7 +4,7 @@ import pygame
 class Settings():
     """Class containing game configuration"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize static game settings"""
         # Time settings
         self.clock = pygame.time.Clock()
@@ -32,7 +32,7 @@ class Settings():
 
         self.init_dynamic_settings()
 
-    def init_dynamic_settings(self):
+    def init_dynamic_settings(self) -> None:
         self.ship_speed = 3
         self.alien_speed = 3
         self.bullet_speed = 4
@@ -44,7 +44,7 @@ class Settings():
         # Set difficulty level
         self.increase_speed()
 
-    def increase_speed(self):
+    def increase_speed(self) -> None:
         self.ship_speed *= self.speedup_scale
         self.alien_speed *= self.speedup_scale
         self.bullet_speed *= self.speedup_scale
