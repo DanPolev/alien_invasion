@@ -1,6 +1,7 @@
 import os
 
-class GameStats():
+
+class GameStats:
     """Statistics tracking for the game"""
     def __init__(self, ai_game) -> None:
         self.settings = ai_game.settings

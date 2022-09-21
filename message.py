@@ -1,11 +1,12 @@
 import pygame
 
 
-class Message():
+class Message:
     """Contains image and image rectangle for message creation"""
     def __init__(self, msg: str = "",
-                 centerx: int = 0,centery: int = 0,
-                 text_color: tuple[int, int, int]=(255, 255, 255),
+                 centerx: int = 0,
+                 centery: int = 0,
+                 text_color: tuple[int, int, int] = (255, 255, 255),
                  text_size: int = 48,
                  text_font: str = None) -> None:
         """Create new image for the message"""
@@ -19,11 +20,11 @@ class Message():
         surface.blit(self.image, self.rect)
 
 
-class GroupMessage():
+class GroupMessage:
     def __init__(self) -> None:
         self.messages = []
 
-    def add(self, msg: str) -> None:
+    def add(self, msg: Message) -> None:
         """Add Message to the Group list"""
         self.messages.append(msg)
 

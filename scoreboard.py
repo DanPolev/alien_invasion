@@ -4,7 +4,7 @@ from pygame.sprite import Group
 from ship import Ship
 
 
-class Scoreboard():
+class Scoreboard:
     """Game info output class"""
     def __init__(self, game) -> None:
         """Initialize attributes for game scoring"""
@@ -55,7 +55,7 @@ class Scoreboard():
         lvl_str = f"Level: {self.stats.lvl}"
         self.lvl_image = self.font.render(lvl_str, True, self.text_color)
         self.lvl_rect = self.lvl_image.get_rect()
-        # Located at the top-right corner -- under the scores
+        # Located in the top-right corner -- under the scores
         self.lvl_rect.right = self.score_rect.right
         self.lvl_rect.top = self.score_rect.bottom + 10
 

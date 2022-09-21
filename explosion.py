@@ -4,7 +4,11 @@ from pygame.sprite import Sprite
 
 class Explosion(Sprite):
     """Create explosions"""
-    def __init__(self, x, y, px_x, px_y):
+    def __init__(self,
+                 x: int,
+                 y: int,
+                 px_x: int,
+                 px_y: int) -> None:
         """Initialize explosion fields"""
         super().__init__()
         self.images = []
@@ -15,7 +19,9 @@ class Explosion(Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
 
-    def _load_images(self, px_x, px_y):
+    def _load_images(self,
+                     px_x: int,
+                     px_y: int) -> None:
         """Loads explosion images & put them in the list"""
         filenames = ["exp0.bmp", "exp1.bmp", "exp2.bmp"]
         img_num = len(filenames)
@@ -25,7 +31,7 @@ class Explosion(Sprite):
             image = pygame.transform.scale(image, (px_x, px_y))
             self.images.append(image)
 
-    def update(self):
+    def update(self) -> None:
         """Update explosion animation"""
         explosion_time = 10
         # update explosion animation

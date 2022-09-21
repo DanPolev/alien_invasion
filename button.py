@@ -1,7 +1,7 @@
 import pygame
 
 
-class Button():
+class Button:
     """Button class"""
     def __init__(self, game,
                  image: pygame.Surface,

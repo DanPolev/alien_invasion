@@ -1,9 +1,8 @@
 import pygame
 
 
-class Settings():
+class Settings:
     """Class containing game configuration"""
-
     def __init__(self) -> None:
         """Initialize static game settings"""
         # Time settings
@@ -14,7 +13,7 @@ class Settings():
         self.font = "bauhaus93"
 
         # Difficulty settings
-        self.difficulties = {"Easy" : 1.1, "Medium" : 1.25, "Hard" : 1.4}
+        self.difficulties = {"Easy": 1.1, "Medium": 1.25, "Hard": 1.4}
 
         # Ship settings
         self.ship_limit = 3

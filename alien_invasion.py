@@ -7,12 +7,12 @@ from ship import Ship
 from bullet import Bullet
 from alien import Alien
 from explosion import Explosion
-import button
+import button as mybutton
 from scoreboard import Scoreboard
 from message import Message, GroupMessage
 
 
-class AlienInvasion():
+class AlienInvasion:
     """Main class for game behaviour and resources management"""
 
     def __init__(self) -> None:
@@ -41,12 +41,12 @@ class AlienInvasion():
         self.menu_state = "main"
 
         # Create buttons
-        self.buttons = {"main" : [],
-                        "pause" : [],
-                        "difficulties" : [],
-                        "options" : [],
-                        "in-game" : [],
-                        "endgame" : []
+        self.buttons = {"main": [],
+                        "pause": [],
+                        "difficulties": [],
+                        "options": [],
+                        "in-game": [],
+                        "endgame": []
                         }
         self._make_buttons()
 
@@ -69,41 +69,42 @@ class AlienInvasion():
 
         x_play = self.screen_rect.centerx
         y_play = self.screen_rect.centery
-        play_button = button.PlayButton(self, button_image, centerx=x_play,
-                                        centery=y_play, scale=0.1)
+        play_button = mybutton.PlayButton(self, button_image, centerx=x_play,
+                                          centery=y_play, scale=0.1)
         self.buttons["main"].append(play_button)
 
         y_quit = y_play + 2 * play_button.rect.h
-        quit_button = button.QuitButton(self, button_image, centerx=x_play,
-                                        centery=y_quit, scale=0.1)
+        quit_button = mybutton.QuitButton(self, button_image, centerx=x_play,
+                                          centery=y_quit, scale=0.1)
         self.buttons["main"].append(quit_button)
         self.buttons["pause"].append(quit_button)
 
-        resume_button = button.ResumeButton(self, button_image, centerx=x_play,
-                                            centery=y_play, scale=0.1)
+        resume_button = mybutton.ResumeButton(self, button_image,
+                                              centerx=x_play, centery=y_play,
+                                              scale=0.1)
         self.buttons["pause"].append(resume_button)
 
         y_restart = y_play + resume_button.rect.h
-        restart_button = button.RestartButton(self, button_image,
-                                              centerx=x_play, centery=y_restart,
-                                              scale=0.1)
+        restart_button = mybutton.RestartButton(self, button_image,
+                                                centerx=x_play,
+                                                centery=y_restart, scale=0.1)
         self.buttons["pause"].append(restart_button)
 
-        easy_button = button.DifficultyButton(self,  button_image, "Easy",
-                                              centerx=x_play, centery=y_play,
-                                              scale=0.1)
+        easy_button = mybutton.DifficultyButton(self,  button_image, "Easy",
+                                                centerx=x_play, centery=y_play,
+                                                scale=0.1)
         self.buttons["difficulties"].append(easy_button)
 
         y_medium = y_play + easy_button.rect.h
-        medium_button = button.DifficultyButton(self, button_image, "Medium",
-                                                centerx=x_play,
-                                                centery=y_medium, scale=0.1)
+        medium_button = mybutton.DifficultyButton(self, button_image, "Medium",
+                                                  centerx=x_play,
+                                                  centery=y_medium, scale=0.1)
         self.buttons["difficulties"].append(medium_button)
 
         y_hard = y_medium + medium_button.rect.h
-        hard_button = button.DifficultyButton(self, button_image, "Hard",
-                                              centerx=x_play, centery=y_hard,
-                                              scale=0.1)
+        hard_button = mybutton.DifficultyButton(self, button_image, "Hard",
+                                                centerx=x_play, centery=y_hard,
+                                                scale=0.1)
         self.buttons["difficulties"].append(hard_button)
 
     def _create_fleet(self) -> None:
@@ -367,12 +368,9 @@ class AlienInvasion():
             for button in button_list:
                 button.clicked = False
 
-        #self.menu_state = "start"
         self.menu_state = "endgame"
-        #self.show_menu = True
         self.stats.game_active = False
         self.stats.write_stats()
-        #pygame.mouse.set_visible(True)
 
     def _reset_game(self) -> None:
         """Reset game parameters"""
