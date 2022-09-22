@@ -8,7 +8,8 @@ class Button:
                  centerx: int = 0,
                  centery: int = 0,
                  scale: float = 1,
-                 msg: str = "") -> None:
+                 msg: str = "",
+                 font_size: int = 46) -> None:
         """Button attributes initialization"""
         self.game = game
         self.settings = self.game.settings
@@ -26,7 +27,7 @@ class Button:
 
         # Text properties
         self.text_color = (255, 255, 255)
-        self.font = pygame.font.SysFont(self.settings.font, 46)
+        self.font = pygame.font.SysFont(self.settings.font, font_size)
 
         self._prep_msg(msg)
 
@@ -55,8 +56,10 @@ class PlayButton(Button):
                  image: pygame.Surface,
                  centerx: int = 0,
                  centery: int = 0,
-                 scale: float = 1) -> None:
-        Button.__init__(self, game, image, centerx, centery, scale, "Play")
+                 scale: float = 1,
+                 font_size: int = 46) -> None:
+        Button.__init__(self, game, image, centerx, centery, scale, "Play",
+                        font_size)
 
     def execute(self) -> None:
         """Execute button function: switch menu_state to difficulty choice"""
@@ -69,8 +72,10 @@ class ResumeButton(Button):
                  image: pygame.Surface,
                  centerx: int = 0,
                  centery: int = 0,
-                 scale: float = 1) -> None:
-        Button.__init__(self, game, image, centerx, centery, scale, "Resume")
+                 scale: float = 1,
+                 font_size: int = 46) -> None:
+        Button.__init__(self, game, image, centerx, centery, scale, "Resume",
+                        font_size)
 
     def execute(self) -> None:
         """Execute button function: hide menu & cursor, resume game"""
@@ -85,8 +90,10 @@ class QuitButton(Button):
                  image: pygame.Surface,
                  centerx: int = 0,
                  centery: int = 0,
-                 scale: float = 1) -> None:
-        Button.__init__(self, game, image, centerx, centery, scale, "Quit")
+                 scale: float = 1,
+                 font_size: int = 46) -> None:
+        Button.__init__(self, game, image, centerx, centery, scale, "Quit",
+                        font_size)
 
     def execute(self) -> None:
         """Execute button function: end game"""
@@ -99,8 +106,10 @@ class RestartButton(Button):
                  image: pygame.Surface,
                  centerx: int = 0,
                  centery: int = 0,
-                 scale: float = 1) -> None:
-        Button.__init__(self, game, image, centerx, centery, scale, "Restart")
+                 scale: float = 1,
+                 font_size: int = 46) -> None:
+        Button.__init__(self, game, image, centerx, centery, scale, "Restart",
+                        font_size)
 
     def execute(self) -> None:
         """Execute button function: restart game process"""
@@ -116,8 +125,10 @@ class DifficultyButton(Button):
                  msg: str,
                  centerx: int = 0,
                  centery: int = 0,
-                 scale: float = 1) -> None:
-        Button.__init__(self, game, image, centerx, centery, scale, msg)
+                 scale: float = 1,
+                 font_size: int = 46) -> None:
+        Button.__init__(self, game, image, centerx, centery, scale, msg,
+                        font_size)
         self.msg = msg
 
     def execute(self) -> None:
@@ -136,9 +147,28 @@ class OptionsButton(Button):
                  image: pygame.Surface,
                  centerx: int = 0,
                  centery: int = 0,
-                 scale: float = 1) -> None:
-        Button.__init__(self, game, image, centerx, centery, scale, "Option")
+                 scale: float = 1,
+                 font_size: int = 46) -> None:
+        Button.__init__(self, game, image, centerx, centery, scale, "Option",
+                        font_size)
 
     def execute(self) -> None:
         """Switch menu_state to options choice"""
         self.game.menu_state = "options"
+        
+
+class BackButton(Button):
+    def __init__(self, game,
+                 image: pygame.Surface,
+                 prev_menu_state: str,
+                 centerx: int = 0,
+                 centery: int = 0,
+                 scale: float = 1,
+                 font_size: int = 46) -> None:
+        Button.__init__(self, game, image, centerx, centery, scale, "Back",
+                        font_size)
+        self.prev_menu_state = prev_menu_state
+
+    def execute(self) -> None:
+        self.game.menu_state = self.prev_menu_state
+        

@@ -7,7 +7,7 @@ from ship import Ship
 from bullet import Bullet
 from alien import Alien
 from explosion import Explosion
-import button as mybutton
+from allbutons import make_buttons
 from scoreboard import Scoreboard
 from message import Message, GroupMessage
 
@@ -48,7 +48,8 @@ class AlienInvasion:
                         "in-game": [],
                         "endgame": []
                         }
-        self._make_buttons()
+
+        make_buttons(self)
 
         # List with all message images
         self.messages = GroupMessage()
@@ -62,50 +63,6 @@ class AlienInvasion:
         self.victory_sound = pygame.mixer.Sound("sounds/victory.wav")
         pygame.mixer.music.load("sounds/bg_music.mp3")
         pygame.mixer.music.play(-1)
-
-    def _make_buttons(self) -> None:
-        """Make all buttons"""
-        button_image = pygame.image.load("images/button.bmp").convert_alpha()
-
-        x_play = self.screen_rect.centerx
-        y_play = self.screen_rect.centery
-        play_button = mybutton.PlayButton(self, button_image, centerx=x_play,
-                                          centery=y_play, scale=0.1)
-        self.buttons["main"].append(play_button)
-
-        y_quit = y_play + 2 * play_button.rect.h
-        quit_button = mybutton.QuitButton(self, button_image, centerx=x_play,
-                                          centery=y_quit, scale=0.1)
-        self.buttons["main"].append(quit_button)
-        self.buttons["pause"].append(quit_button)
-
-        resume_button = mybutton.ResumeButton(self, button_image,
-                                              centerx=x_play, centery=y_play,
-                                              scale=0.1)
-        self.buttons["pause"].append(resume_button)
-
-        y_restart = y_play + resume_button.rect.h
-        restart_button = mybutton.RestartButton(self, button_image,
-                                                centerx=x_play,
-                                                centery=y_restart, scale=0.1)
-        self.buttons["pause"].append(restart_button)
-
-        easy_button = mybutton.DifficultyButton(self,  button_image, "Easy",
-                                                centerx=x_play, centery=y_play,
-                                                scale=0.1)
-        self.buttons["difficulties"].append(easy_button)
-
-        y_medium = y_play + easy_button.rect.h
-        medium_button = mybutton.DifficultyButton(self, button_image, "Medium",
-                                                  centerx=x_play,
-                                                  centery=y_medium, scale=0.1)
-        self.buttons["difficulties"].append(medium_button)
-
-        y_hard = y_medium + medium_button.rect.h
-        hard_button = mybutton.DifficultyButton(self, button_image, "Hard",
-                                                centerx=x_play, centery=y_hard,
-                                                scale=0.1)
-        self.buttons["difficulties"].append(hard_button)
 
     def _create_fleet(self) -> None:
         """Create alien fleet"""
