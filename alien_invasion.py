@@ -10,7 +10,7 @@ from explosion import Explosion
 from allbutons import make_buttons
 from allmessages import make_messages
 from scoreboard import Scoreboard
-from switcher import Switcher
+from toggle import Toggle
 
 
 class AlienInvasion:
@@ -38,8 +38,8 @@ class AlienInvasion:
         self._create_fleet()
 
         # Game sounds
-        self.is_sound_playing = Switcher()
-        self.is_music_playing = Switcher()
+        self.sound_player = Toggle()
+        self.music_player = Toggle()
         self.sounds = []
         pygame.mixer.init()
         self.laser_sound = pygame.mixer.Sound("sounds/laser.wav")
@@ -344,16 +344,19 @@ class AlienInvasion:
 
     def _play_sounds(self) -> None:
         """Play activated game sounds"""
-        if self.is_sound_playing.status:
+        if self.sound_player.status:
             for sound in self.sounds:
                 sound.play()
             self.sounds.clear()
 
     def _play_music(self) -> None:
-        if self.is_music_playing.status:
-            pygame.mixer.music.unpause()
-        else:
-            pygame.mixer.music.pause()
+        """..."""
+        if self.music_player.toggled:
+            if not self.music_player.status:
+                pygame.mixer.music.pause()
+            else:
+                pygame.mixer.music.unpause()
+            self.music_player.toggled = False
 
     def run_game(self) -> None:
         """Run main loop"""
@@ -369,6 +372,7 @@ class AlienInvasion:
             self._update_screen()
             self._play_sounds()
             self._play_music()
+
             self.settings.clock.tick(self.settings.fps)
 
 

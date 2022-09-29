@@ -76,12 +76,12 @@ def make_buttons(game) -> None:
 
     x_tickbox = game.screen_rect.centerx + 150
     y_tickbox = game.screen_rect.centery
-    tickbox = mybutton.TickBox(game, game.is_music_playing,
+    tickbox = mybutton.TickBox(game, game.music_player,
                                x_tickbox, y_tickbox)
     game.buttons["options"].append(tickbox)
 
     x_tickbox = game.screen_rect.centerx + 150
     y_tickbox = game.screen_rect.centery + 100
-    tickbox = mybutton.TickBox(game, game.is_sound_playing,
+    tickbox = mybutton.TickBox(game, game.sound_player,
                                x_tickbox, y_tickbox)
     game.buttons["options"].append(tickbox)

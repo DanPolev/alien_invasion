@@ -1,6 +1,6 @@
 import pygame
 
-from switcher import Switcher
+from toggle import Toggle
 
 
 class Button:
@@ -179,7 +179,7 @@ class BackButton(Button):
 
 class TickBox(Button):
     def __init__(self, game,
-                 switch_param: Switcher,
+                 switch_param: Toggle,
                  centerx: int = 0,
                  centery: int = 0) -> None:
         """Initialize TickBox: make tickbox image, take switch parameter"""
@@ -210,7 +210,7 @@ class TickBox(Button):
 
     def execute(self) -> None:
         """Switch given switch_parameter and draw/hide a tick mark"""
-        self.switch_param.switch()
+        self.switch_param.toggle()
         if self.switch_param.status:
             self.image = self.tickedbox_img
         else:
