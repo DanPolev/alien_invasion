@@ -1,5 +1,7 @@
 import pygame
 
+from switcher import Switcher
+
 
 class Button:
     """Button class"""
@@ -40,7 +42,7 @@ class Button:
         self.msg_image_rect = self.msg_image.get_rect()
         self.msg_image_rect.center = self.rect.center
 
-    def draw_button(self, surface: pygame.Surface) -> None:
+    def draw(self, surface: pygame.Surface) -> None:
         """Display an empty button & message afterwards"""
         surface.blit(self.image, self.rect)
         surface.blit(self.msg_image, self.msg_image_rect)
@@ -79,6 +81,7 @@ class ResumeButton(Button):
 
     def execute(self) -> None:
         """Execute button function: hide menu & cursor, resume game"""
+        self.game.menu_state = "in-game"
         self.game.show_menu = False
         self.game.stats.game_active = True
         pygame.mouse.set_visible(False)
@@ -113,6 +116,7 @@ class RestartButton(Button):
 
     def execute(self) -> None:
         """Execute button function: restart game process"""
+        self.game.menu_state = "in-game"
         self.game.show_menu = False
         self.game.stats.game_active = False
         self.start_game = True
@@ -171,4 +175,43 @@ class BackButton(Button):
 
     def execute(self) -> None:
         self.game.menu_state = self.prev_menu_state
-        
+
+
+class TickBox(Button):
+    def __init__(self, game,
+                 switch_param: Switcher,
+                 centerx: int = 0,
+                 centery: int = 0) -> None:
+        """Initialize TickBox: make tickbox image, take switch parameter"""
+        self.width = 50
+        self.height = 50
+        self.switch_param = switch_param
+        self._make_emptybox_img()
+        self.make_tickedbox_img()
+
+        Button.__init__(self, game, self.tickedbox_img, centerx, centery)
+
+    def _make_emptybox_img(self):
+        """Make empty tickbox image"""
+        self.emptybox_img = pygame.Surface((self.width, self.height))
+        rect = self.emptybox_img.get_rect()
+        white = (255, 255, 255)
+        red = (255, 0, 0)
+        self.emptybox_img.fill(white, rect)
+        pygame.draw.rect(self.emptybox_img, red, rect, width=5)
+
+    def make_tickedbox_img(self):
+        self.tickedbox_img = pygame.image.load("images/x_mark.bmp")
+        self.tickedbox_img = pygame.transform.scale(self.tickedbox_img,
+                                                    (self.width, self.height))
+        rect = self.tickedbox_img.get_rect()
+        red = (255, 0, 0)
+        pygame.draw.rect(self.tickedbox_img, red, rect, width=5)
+
+    def execute(self) -> None:
+        """Switch given switch_parameter and draw/hide a tick mark"""
+        self.switch_param.switch()
+        if self.switch_param.status:
+            self.image = self.tickedbox_img
+        else:
+            self.image = self.emptybox_img

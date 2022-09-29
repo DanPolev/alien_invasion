@@ -8,8 +8,9 @@ from bullet import Bullet
 from alien import Alien
 from explosion import Explosion
 from allbutons import make_buttons
+from allmessages import make_messages
 from scoreboard import Scoreboard
-from message import Message, GroupMessage
+from switcher import Switcher
 
 
 class AlienInvasion:
@@ -36,25 +37,10 @@ class AlienInvasion:
 
         self._create_fleet()
 
-        # Menu states & flags
-        self.show_menu = True
-        self.menu_state = "main"
-
-        # Create buttons
-        self.buttons = {"main": [],
-                        "pause": [],
-                        "difficulties": [],
-                        "options": [],
-                        "in-game": [],
-                        "endgame": []
-                        }
-
-        make_buttons(self)
-
-        # List with all message images
-        self.messages = GroupMessage()
-
         # Game sounds
+        self.is_sound_playing = Switcher()
+        self.is_music_playing = Switcher()
+        self.sounds = []
         pygame.mixer.init()
         self.laser_sound = pygame.mixer.Sound("sounds/laser.wav")
         self.explosion_sound = pygame.mixer.Sound("sounds/explosion.wav")
@@ -63,6 +49,29 @@ class AlienInvasion:
         self.victory_sound = pygame.mixer.Sound("sounds/victory.wav")
         pygame.mixer.music.load("sounds/bg_music.mp3")
         pygame.mixer.music.play(-1)
+
+        # Menu states & flags
+        self.show_menu = True
+        self.menu_state = "main"
+
+        self.messages = {"main": [],
+                         "pause": [],
+                         "difficulties": [],
+                         "options": [],
+                         "in-game": [],
+                         "endgame": []}
+        # Create messages
+        make_messages(self)
+
+        # Menu_states-button_lists dictionary
+        self.buttons = {"main": [],
+                        "pause": [],
+                        "difficulties": [],
+                        "options": [],
+                        "in-game": [],
+                        "endgame": []}
+        # Create buttons
+        make_buttons(self)
 
     def _create_fleet(self) -> None:
         """Create alien fleet"""
@@ -112,7 +121,7 @@ class AlienInvasion:
             for button in self.buttons[self.menu_state]:
                 button.clicked = button.rect.collidepoint(mouse_pos)
                 if button.clicked:
-                    self.button_sound.play()
+                    self.sounds.append(self.button_sound)
 
     def _execute_button(self) -> None:
         """Execute pressed button functionality"""
@@ -143,13 +152,15 @@ class AlienInvasion:
             self._fire()
         elif event.key == pygame.K_RETURN:
             if self.menu_state == "endgame":
-                self.messages.eraseall()
                 self.menu_state = "main"
                 self.show_menu = True
                 pygame.mouse.set_visible(True)
         elif event.key == pygame.K_ESCAPE:
             if self.menu_state == "in-game" or self.menu_state == "pause":
-                self.menu_state = "pause"
+                if self.menu_state == "in-game":
+                    self.menu_state = "pause"
+                else:
+                    self.menu_state = "in-game"
                 self.show_menu = not self.show_menu
                 self.stats.game_active = not self.stats.game_active
                 pygame.mouse.set_visible(not self.stats.game_active)
@@ -176,13 +187,17 @@ class AlienInvasion:
         """Make new bullet & add it to the bullets group"""
         if len(self.bullets) < self.settings.max_bullets:
             self.bullets.add(Bullet(self))
-            self.laser_sound.play()
+            self.sounds.append(self.laser_sound)
 
     def _display_buttons(self) -> None:
         """Display buttons if they are pressed"""
         if self.show_menu and not self.stats.game_active:
             for button in self.buttons[self.menu_state]:
-                button.draw_button(self.screen)
+                button.draw(self.screen)
+
+    def _display_messages(self) -> None:
+        for msg in self.messages[self.menu_state]:
+            msg.draw(self.screen)
 
     def _update_screen(self) -> None:
         """Update screen state"""
@@ -199,9 +214,9 @@ class AlienInvasion:
         # Display scoreboard
         self.scoreboard.show_score()
         # Display other related images
-        self.messages.draw(self.screen)
 
         self._display_buttons()
+        self._display_messages()
 
         # Display last drawn screen
         pygame.display.flip()
@@ -217,7 +232,6 @@ class AlienInvasion:
         collision = pygame.sprite.groupcollide(
             self.bullets, self.aliens, True, True)
         if collision:
-            print(collision)
             self._create_explosion(collision)
             self._score_collision(collision)
 
@@ -257,7 +271,7 @@ class AlienInvasion:
                 self.explosions.add(Explosion(x=pos_x, y=pos_y,
                                               px_x=alien.rect.w,
                                               px_y=alien.rect.h))
-        self.explosion_sound.play()
+        self.sounds.append(self.explosion_sound)
 
     def _check_fleet_edges(self) -> None:
         """Change fleet direction if it reaches the screen edge"""
@@ -297,28 +311,10 @@ class AlienInvasion:
         else:
             pygame.mixer.music.pause()
             if self.stats.high_score > self.stats.score:
-                self.losing_sound.play()
+                self.sounds.append(self.losing_sound)
             else:
-                self.victory_sound.play()
-            self._make_endgame_msg()
+                self.sounds.append(self.victory_sound)
             self._end_game()
-
-    def _make_endgame_msg(self) -> None:
-        centerx = self.screen_rect.centerx
-        centery = self.screen_rect.centery - 100
-        msg = Message("GAME", centerx, centery, text_font=self.settings.font,
-                      text_size=100)
-        self.messages.add(msg)
-
-        centery += msg.rect.h
-        msg = Message("OVER!", centerx, centery, text_font=self.settings.font,
-                      text_size=100)
-        self.messages.add(msg)
-
-        centery += msg.rect.h
-        msg = Message("Press ENTER to continue", centerx, centery,
-                      text_font=self.settings.font)
-        self.messages.add(msg)
 
     def _end_game(self) -> None:
         for button_list in self.buttons.values():
@@ -346,6 +342,19 @@ class AlienInvasion:
                 self._ship_hit()
                 break
 
+    def _play_sounds(self) -> None:
+        """Play activated game sounds"""
+        if self.is_sound_playing.status:
+            for sound in self.sounds:
+                sound.play()
+            self.sounds.clear()
+
+    def _play_music(self) -> None:
+        if self.is_music_playing.status:
+            pygame.mixer.music.unpause()
+        else:
+            pygame.mixer.music.pause()
+
     def run_game(self) -> None:
         """Run main loop"""
         while self.run:
@@ -358,6 +367,8 @@ class AlienInvasion:
                 self._update_aliens()
 
             self._update_screen()
+            self._play_sounds()
+            self._play_music()
             self.settings.clock.tick(self.settings.fps)
 
 

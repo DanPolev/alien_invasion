@@ -7,7 +7,7 @@ def make_buttons(game) -> None:
     button_image = pygame.image.load("images/button.bmp").convert_alpha()
 
     x_play = game.screen_rect.centerx
-    y_play = game.screen_rect.centery
+    y_play = game.screen_rect.centery - 50
     play_button = mybutton.PlayButton(game, button_image, centerx=x_play,
                                       centery=y_play, scale=0.1)
     game.buttons["main"].append(play_button)
@@ -24,18 +24,25 @@ def make_buttons(game) -> None:
                                            centery=y_quit_main, scale=0.1)
     game.buttons["main"].append(quit_main_button)
 
+    y_resume = game.screen_rect.centery - play_button.rect.h
     resume_button = mybutton.ResumeButton(game, button_image,
-                                          centerx=x_play, centery=y_play,
+                                          centerx=x_play, centery=y_resume,
                                           scale=0.1)
     game.buttons["pause"].append(resume_button)
 
-    y_restart = y_play + resume_button.rect.h
+    y_restart = y_resume + resume_button.rect.h
     restart_button = mybutton.RestartButton(game, button_image,
                                             centerx=x_play,
                                             centery=y_restart, scale=0.1)
     game.buttons["pause"].append(restart_button)
 
-    y_quit_pause = y_restart + restart_button.rect.h
+    #y_option = y_restart + restart_button.rect.h
+    #option_button = mybutton.OptionsButton(game, button_image,
+    #                                       centerx=x_play, centery=y_option,
+    #                                       scale=0.1)
+    #game.buttons["pause"].append(option_button)
+
+    y_quit_pause = y_restart + option_button.rect.h
     quit_pause_button = mybutton.QuitButton(game, button_image,
                                             centerx=x_play,
                                             centery=y_quit_pause, scale=0.1)
@@ -66,3 +73,15 @@ def make_buttons(game) -> None:
                                       scale=0.08)
     game.buttons["options"].append(back_button)
     game.buttons["difficulties"].append(back_button)
+
+    x_tickbox = game.screen_rect.centerx + 150
+    y_tickbox = game.screen_rect.centery
+    tickbox = mybutton.TickBox(game, game.is_music_playing,
+                               x_tickbox, y_tickbox)
+    game.buttons["options"].append(tickbox)
+
+    x_tickbox = game.screen_rect.centerx + 150
+    y_tickbox = game.screen_rect.centery + 100
+    tickbox = mybutton.TickBox(game, game.is_sound_playing,
+                               x_tickbox, y_tickbox)
+    game.buttons["options"].append(tickbox)
